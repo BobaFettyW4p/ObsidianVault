@@ -1,0 +1,1 @@
+"One of my annoying traits is I know the name of the 3 wise men" "I wouldn't put that in your top 20"
