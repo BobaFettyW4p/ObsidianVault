@@ -67,7 +67,7 @@ programming the cache?!?!
 huge gaps in C++
 - no networking
 - No thread pools
-- Asynchronour programming broken until C++26
+- Asynchronous programming broken until C++26
 - No sender-receiver
 - No reflection
 	- no serialization, RPC, etc
@@ -91,29 +91,31 @@ huge gaps in C++
 - Multiparadigm
 - Lightweight abstractions
 	- supports low-level system programming and high-level abstractions
+- Statically typesafe and type inferenced
+- Exceptions, Expected, and RAII
 
-C++ is a Compiled language
+**C++ is a Compiled language
 - uses "Ahead of Time" compilation
 	- have to manually compile before running
 	- can be much faster
 	- enables "metaprogramming" the compiler to control code generation
 
-Multiparadigm
+**Multiparadigm
 - C++ is not an object oriented language
 	- but it does support OOP
 	- also supports other paradigms
 		- standard library prefers compile-time dispatch (templates)
 
-C++ is a lightweight abstraction language
-- languages typically fall into a tradeoff between being good for programmers (abstract) and goood for computers (low memory, fast, low level)
+**C++ is a lightweight abstraction language
+- languages typically fall into a tradeoff between being good for programmers (abstract) and good for computers (low memory, fast, low level)
 - we need both as both loom over programming decisions
 	- need to be able to decide as needed
 		- can create powerful abstractions with all abstraction "compiled away" using templated
 		- no performance penalty associated
 
-Delivering performance and abstraction
+**Delivering performance and abstraction
 - allows low-level manipulation of code and data
-- use compile-time computate to generate optimal code
+- use compile-time computation to generate optimal code
 - C++ has no equivalent of scripting or iPython notebooks
 
 how do we copy data from one data structure to another?
@@ -121,16 +123,17 @@ how do we copy data from one data structure to another?
 	- fast, but not abstract
 	- not fit for prod programs that are complex and need to be adapted over time
 - more complex objects contain other objects all over memory
-	- in C, copying a compound object only copies the rooy
+	- in C, copying a compound object only copies the root
 		- have to manually write deep copy commands
-			- brittle implementation details
+			- complicated, time-consuming and brittle implementation details
 
 C++ classes can be considered the way you create your own types
-- copy constructor that teaches you the correct way to copy objects
+- a copy constructor teaches the compiler the correct way to copy objects
 	- abstract: copy any object with an assignment, independant of implementation
 	- lightweight: compiler generates the code, so it's just as efficient of doing it manually
 
 C++ std library provides a standard copy function
+- `std::copy`
 - ultimate in abstraction
 	- copies from anything to anything else, can do deep copies
 	- as abstract as Java
@@ -138,35 +141,47 @@ C++ std library provides a standard copy function
 	- as efficient as C
 		- compiler uses a mechanism called "template programming" to generate the most efficient code at compile-time
 			- will simply use `memcpy` if that is sufficient
-				- 800% performance improcement in some cases
+				- 800% performance improvement in some cases
 
 Static type safety and inference
-- Python are unsafe in a different way
+- Python is unsafe in a different way
 	- any variable can hold any type of object
-		- "dynamic typing"
-		- can change over the course of a program and lead to unsafet
+		- "dynamic typing"/"duck typing"
+		- can change over the course of a program and lead to unsafety
 			- C++ does not allow this
 				- types are checked during compilation
 					- Static type-safety
-					- compiler will not let you misinterpret the type of an object
+					- compiler will not let you misinterpret the type of an object unless you deliberately try to deceived it
+```
+var a = "foo"; //Javascript
+if (bar())
+a = 7; //a might change type
+console.log(a.length()); //Legal? who knows?
+```
 
-"Programmers working in richly typed languages often remark that their programs tend to 'just work' once they bypass the typechecker"
+>"Programmers working in richly typed languages often remark that their programs tend to 'just work' once they bypass the typechecker"
+> - Benjamin Pierce, *Types and Programming Languages*
+
 - having to write out all types is a lot of friction
+	- in comparison, Python is a lot easier to just "hack out" even if they're less suitable for reliable prod systems
 	- Solution: Inference
 		- C++ can infer the type without being explicitly mentioned
 			- benefits of static typing without headaches
 				- templates are based on inferring types
+```
+auto a  = "foo"s; // compiler will deduce a is a string
+a = 7; // Ill-formed, will not compiled
+```
 
 Exceptions, Excepted, and RAII
-- proper error handling and clean up
-	- estimated 40% of dev time
-- variety of abstractions to handle this
+- proper error handling and clean up takes ~40% of C development time
+	- C++ offers a variety of abstractions to handle this and reduce that time
 
 
 
 
 
-Starting from "Hello World"
+**Starting from "Hello World"
 
 - don't need to use a specific compiler or IDE
 	- Advantages:
@@ -182,22 +197,65 @@ What compiler should you use
 		- may need to set a `-std=c++20` flag
 	- VSCode, CLion, godbolt.org
 
+# HelloWorld.cpp
+```
+#include <iostream>
 
-CMake
+int
+main()
+{
+std::cout << "Hello, world!\n";
+return 0;
+}
+```
+
+
+**CMake
 - you are free to build however you want
 	- CMake is the most common way to manage the complexity of building
 		- "meta build" system for any compiler and operating system
 		- CMake tends to introduce it's own complexity
 
-CMakeLists.txt
+**CMakeLists.txt
 - you describe a project with a \CMakeLists.txt
+- for HelloWorld.cpp:
+```
+cmake_minimum_required(VERSION 3.5)
+set(CMAKE_CXX_STANDARD 20)
+project(HelloWorld)
 
+add_executable(hello_world hello.cpp)
+```
+- to build:
+	- `cmake -S . -B ./build` - invokes CMake on `pwd`, searches for the CMakeLists, then creates the build directory at `./build`
+	- `cmake --build ./build` - builds the binaries and stores them in `./build` according to the requirements
+	- can leverage VSCode to simplify this
 
-{fmt}
-- widely used open soruce library that implements format in C++ when the compiler doesn't
-	- a little ugly to download a "standard" library, but worht it
+**A More Personalized Greeting
+```
+#include<iostream>
+#include<format>
+using namespace std;
+
+int
+main()
+{
+string name
+cout << "What is your name?";
+cin >> name;
+cout << format("Hello, {}!\n", name);
+return 0;
+}
+```
+
+- this may or may not compiled based on the library
+- `<format>` was added in C++ 20, but not all compilers have implemented it, but there is an alternative...
+
+**{fmt}
+- widely used open source library that implements format in C++ when the compiler doesn't
+	- a little ugly to download a "standard" library, but worth it
 		- many C++ projects already doing this
-- download it from github fmtlib/fmt
+- download it from git repo  `fmtlib/fmt`
 - use C++ package manager
 - modify top fo the file
 	- `#include<fmt/format.h`
@@ -206,9 +264,11 @@ CMakeLists.txt
 
 
 The preprocessor
-- #include and #define are commands to the C++ preprocessor, that do simple cut and paste on text
-- #include `foo.h` cuts and pastes foo.h directly into the including file
-- #define x 7 replaces all occurences of token X with the toke 7
+- `#include`and `#define` are commands to the C++ preprocessor, that do simple cut and paste on text
+- `#include foo.h` cuts and pastes foo.h directly into the including file
+	- this technique is used in a lot of standard library implementations
+- `#define x 7` replaces all occurrences of token X with the token 7
+	- dangerous, should be careful using this
 - most modern languages do not include a pre-processor because they cause problems
 	- preprocessor definitions ignore namespaces
 	- each include source file balloons to tens of thousands of lines
@@ -221,10 +281,10 @@ C++ lets you separately compile and link libraries
 
 C++ has a variety of ways of defining and initializing variables
 - will be covered
-- `int i=5` //i is an int initialized to 5
-- i=7 // i is now 7
-- i="Hello; //this is an error, C++ is a statically rtyped language
-- auto j=3; //j is an int
+- `int i=5 //i is an int initialized to 5`
+- `i=7 // i is now 7`
+- `i="Hello; //this is an error, C++ is a statically typed language`
+- `auto j=3; //j is an int`
 
 why do they call it a double?
 - floating points were a big problem for computers until relatively recently
@@ -233,12 +293,164 @@ why do they call it a double?
 		- modern computers can process these in much faster times
 			- progression to half-width floating points
 				- modern neural nets don't need to be that precise
+**Defining functions
+```
+int square(int n)
+{
+return n*n;
+}
+//good, but can only accept ints
+double square(double n)
+{
+return n*n;
+}
+//this would let us use square() for either ints or doubles
+//called a function overload; the compiler is smart enough to infer which should be used in a specific situation
 
-C++ is statically typesafe, largely rype inferenced
+auto square(double n)
+{
+return n*n;
+}
+//this can replace both above square() functions; compiler will infer return type based on inputs to square()
+```
+
+C++ is statically typesafe, largely type inferenced
 - powerful generic mechanism known as templates
-	- give simplicity of untyped types with the safety of compiled-time type calidation
+	- templates let you give a name to a not yet specified type and allow the compiler to infer that type as needed
+	- give simplicity of untyped types with the safety of compiled-time type validation
 	- major theme in C++, still a work in progress
+```
+//function templates
 
+auto square(auto n)
+{
+return n*n;
+}
+int main()
+{
+return square(2) + square(3.1416); // okay; the compiler can infer the type in the square() function and will do so as needed
+}
 
+//function templates pre C++20
+template<typename T>
+T square(T n)
+{
+return n*n;
+}
+int main()
+{
+return square(2) + square(3.1416); // also okay for the same reasons as above
+}
+```
 
+**Containers: vector
+- `std::vector` is in fact a class template, so the compiler can build a version optimized for each class
+```
+vector<int> v = {1,2,3}; //type can be specified
+vector w = {1,2,3}; // or deduced (this is a vector<int>)
+//loops
+for(auto i:v) //modern syntax for for loops
+{
+std::cout << i << ''; // prints 1 2 3
+}
+for(int i=0; i<v.size(); i++); //older for loop syntax
+{
+std::cout << i << ''; // prints 1 2 3
+}
+```
 
+HOMEWORK
+>Print out the first 8 rows of Pascal's triangle.  This assignment is most easily completed by using a nested container
+
+```
+#include<iostream>
+
+#include<vector>
+
+#define FMT_HEADER_ONLY
+
+#include<fmt/format.h>
+
+#include<string>
+
+using namespace std;
+
+using namespace fmt;
+
+int main() {
+
+    const int num_rows=8;
+
+    vector<vector<int>> triangle;
+
+    for (int i=0; i<num_rows; i++) {
+
+        vector<int> row(i+1,1);
+
+        for (int j=1;j<i;j++) {
+
+            row[j]=triangle[i-1][j-1]+triangle[i-1][j];
+
+        }
+
+        triangle.push_back(row);
+
+    }
+
+    int max_width=triangle[num_rows-1][num_rows/2];
+
+    int field_width=to_string(max_width).length()+1;
+
+    //print Pascal's triangle
+
+    for (int i=0; i<num_rows; i++) {
+
+        //print leading spaces
+
+        cout<<string((num_rows-i-1)*field_width/2,' ');
+
+        //print the actual values in the triangle
+
+        for (int val: triangle[i]) {
+
+            cout<<format("{:>{}}",val,field_width);
+
+        }
+
+        cout<<endl;
+
+    }
+
+    return 0;
+
+}
+```
+
+>  Write a valid C program that is not a valid  
+C++ program
+
+```
+#include <stdio.h>
+
+//My approach to this problem was to utilize a keyword that is reserved in C++
+
+//but was not reserved in C.
+
+//"class" is the keyword I have used for this example. When this program declares the variable "class" on line 9
+
+//this causes a C++ compiler to error, whereas a C compiler will proceed as expected.
+
+int main() {
+
+    char class[50];
+
+    printf("What programming language are you learning in class? ");
+
+    scanf("%s",class);
+
+    printf("Good luck learning %s!\n",class);
+
+    return 0;
+
+}
+```
