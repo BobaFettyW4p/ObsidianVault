@@ -1,5 +1,4 @@
 
-
 **C++ Algorithms*
 - there are some standard library ones
 	- `std::transform`
