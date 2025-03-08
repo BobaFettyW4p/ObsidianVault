@@ -3,10 +3,10 @@
 	- if a method of a template class isn't called, then it isn't compiled
 	- helpful, but why is a static member never compiled?
 
-**CWhy**
+# CWhy #
 - good tool to analyze error messages
 
-**`static_assert`**
+# `static_assert` #
 - compile-time assertion that prints an error message
 - `static_assert(row==cols, "Sorry, only square matrices have determinants");`
 
@@ -21,7 +21,7 @@ return determinantImpl(*this);
 }
 ```
 
-**Inheriting constructors**
+# Inheriting constructors #
 - we can inherit everything but constructors from the common implementation even though they do the right thing
 	- the constructors don't have the same names, they are named after the class
 		- Since classes often have many constructors, this can make it painful to build lightweight wrapper classes on top of others
@@ -57,7 +57,7 @@ callable(5);
 - this still works with a valid callable
 	- if it does throw, it will throw inside the function if callable is set to an invalid value
 
-**What goes wrong with the following natural code?**
+## What goes wrong with the following natural code? ##
 ```
 template<typename T>  
 void f(T &t) {  
@@ -130,7 +130,7 @@ return gcd(b, a – b*(a/b));
 ```
 - what can we do in classic C++?
 
-**SFINAE**
+# SFINAE #
 - Substitution Failure is Not an Error
 	- when creating candidate overloads for a function, invalid substitutions in a template should mean it's not considered a possible overload
 		- No compile error occurs even though the template failed to compile
@@ -184,7 +184,7 @@ gcd(4, 6); // OK, runs the way we expect
 gcd(4.2, 6.0); // Must be a different gcd, compiler will search for another gcd() to call
 ```
 
-**constexpr**
+# constexpr #
 - allows you to do computations at compile-time
 - Normally, we think of programming as a way to write code that runs at runtime
 	- increasingly common to take place at compile time instead
@@ -242,7 +242,7 @@ auto square(int x) constexpr
 Matrix<square(3), square(3)> m; // now this is OK
 ```
 
-**`if constexpr`**
+## `if constexpr` ##
 - our matrix examples might seem like overkill
 	- why couldn't we just check if it's a 1x1 matrix then go from there, like this:
 ```
@@ -288,7 +288,7 @@ val += (i % 2 ? -1 : 1) * data[i][0]
 return val;  
 }
 ```
-**const v constexpr**
+## const v constexpr ##
 - easy to confuse, but mean very different things
 	- `constexpr` means the value is known at compile time
 		- `int constexpr seven = 7;`
@@ -296,7 +296,7 @@ return val;
 		- `void f(int const &i);`
 		- we won't know the value of `i` until runtime, but we know `f` won't  change it
 		- 
-**`const` methods**
+## `const` methods ##
 - if you have a `const object`, you are only allowed to call `const` methods on it
 ```
 class A { A(); void f() const; void g(); };  
@@ -310,7 +310,7 @@ ac.g(); // ill-formed
 - this is very different from `constexpr` because the value of `ac` is not known at compile time
 - it is also possible to overload methods on constness
 
-**decltype**
+# decltype #
 - sometimes you don't know what type an expression is
 	- very common with template code or complex expressions
 	- `decltype(X)` gives you the type of X
@@ -329,7 +329,7 @@ t.join(); // This join is skipped
 ```
 - better to use `try/catch`, even better to use an RAII class that joins like `std::jthread`
 
-**Exceptions and RAII**
+# Exceptions and RAII #
 - When something goes wrong, throw an exception
 	- ensure they're not inadvertently ignored
 - Can throw an exception with `throw`
@@ -338,7 +338,7 @@ t.join(); // This join is skipped
 	- if you don't catch the exception, it is passed to the caller and to the caller's caller, etc. until it is caught
 - C++20 introduced `std::expected` that builds on previous code
 
-**Why do exceptions break explicit resource management?**
+## Why do exceptions break explicit resource management? ##
 - exceptions make it really hard to manage resources and memory:
 ```
 void f() {
@@ -352,7 +352,7 @@ code_to_release_resources;
 - searching for a better solution to memory management requires a full understanding of the C++ object lifecycle
 	- In general, C++ programmers who understand the C++ object lifestyle spend very little time on memory management
 
-**RAII**
+# RAII #
 - "Resource Acquisition is Initialization"
 	- one of the most important idioms in modern C++
 - RAII use automatic duration objects to manage the lifetimes of dynamic duration resources
@@ -393,7 +393,7 @@ h finishes */
 	- many of these are threading classes
 		- concurrency makes resource management difficult
 
-**Threads**
+# Threads #
 - computers are not getting faster
 	- computer cores have not gotten any faster over the past 15 years
 		- increasing clock speed increases heat
@@ -419,7 +419,7 @@ t.join(); // Wait for that thread to complete
 	- joining the thread means the function will wait until the thread completes
 		- if you don't it is possible for the function to exit, orphaning your thread (and it's output)
 		- detached threads are an exception and do not need to be joined
-**Locks**
+## Locks ##
 - the simplest way to protect shared data is with a `std::mutex` (mutual exclusion)
 - accessing the same data from multiple threads without using synchronization (like mutexes) is called a data race error
 - C++ includes a handy RAII class `std::lock_guard` to ensure a thread will only release the mutex when it's done
@@ -470,8 +470,8 @@ code_to_work_with_a
 - `A` is guaranteed to have its destructor called and memory cleaned up even if an exception is thrown
 - this code is also simpler and less error-prone because we no longer need to write code to clean up `a`
 
-- `lock_guard` is an RAII class for managing locks
-	- similar to how `unique_ptr` manages objects
+## `lock_guard` is an RAII class for managing locks ##
+- similar to how `unique_ptr` manages objects
 	- its constructor acquires a lock
 	- its destructor releases a lock:
 ```
@@ -523,7 +523,7 @@ std::find(some_list.begin(),some_list.end(),value_to_find) != some_list.end();
 }
 ```
 
-**Lock ordering**
+## Lock ordering ##
 - if you want to avoid deadlocks, you want to acquire locks in the same order
 	- to not do so could lead to a deadlock
 		- thread 1 has acquired lock A but is trying to acquire lock B while thread 2 has acquired lock B but is trying to acquire lock A
@@ -546,7 +546,7 @@ to.balance += amount;
 };
 ```
 
-`std::scoped_lock` acquires multiple locks at the same time and guarantees there is no deadlock
+## `std::scoped_lock` acquires multiple locks at the same time and guarantees there is no deadlock ##
 - tries releasing locks and acquiring in different orders until no deadlock occurs
 ```
 class account {  
@@ -562,7 +562,7 @@ to.balance += amount;
 };
 ```
 
-**thread arguments**
+## thread arguments ##
 - you can add arguments to be passed to the new thread when you construct the `std::thread` object
 	- there are some surprising gotchas that make them different
 - passing arguments to a thread:

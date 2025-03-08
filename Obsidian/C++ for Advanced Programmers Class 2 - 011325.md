@@ -3,15 +3,15 @@
 
 `typedef vector<int> Row;` //tired, old fashioned; assigns `vector<int>` to Row
 `using Triangle=vector<Row>;` //alternative notation
+- the above 2 are a useful abstraction to  make it easier to change types later; also makes it easier to understand
 
-the above 2 are a useful abstraction to  make it easier to change types later; also makes it easier to understand
-
-typedef notation is dated, should be avoided; main problem is it can lead to ambiguous parsing
+- `typedef` notation is dated, should be avoided; main problem is it can lead to ambiguous parsing
 - cannot have a template typedef, can only use `using`
 
-Almost everything written by good c++ programmers is templatized
+>"Almost everything written by good c++ programmers is templatized"
 
-for loop notation - for (element:element) where the second element is an iterable
+
+for loop notation - `for (element:element)` where the second element is an iterable
 - can use auto for the first element to infer the type
 
 don't use `int const var = value`, use `int constexpr var = value`
@@ -33,19 +33,16 @@ return os.str().size(); // will get an error that it returns an unsigned type - 
 
 to get the position of an iterator, and not the item of it, de-reference it with an asterisk, i,.e, `*max_element`
 
-LECTURE
+# LECTURE #
 
-a program refers to data objects through expressions in C++ (or whatever language is being used)
-
-when the program is run, actual data objects exist in computer memory
-
-how does the code find, interpret, and manage objects at runtime?
-
+- a program refers to data objects through expressions in C++ (or whatever language is being used)
+- when the program is run, actual data objects exist in computer memory
+- how does the code find, interpret, and manage objects at runtime?
 - when the program creates a variable at runtime, it allocates memory on the stack to hold the data
 	- any expression referencing the variable will use the data there
-	- ![[Pasted image 20250305194214.png]]
+![[Pasted image 20250305194214.png]]
 
-in C++, when we do an assignment, the object is copied
+- in C++, when we do an assignment, the object is copied
 
 ```
 int i =3;
@@ -69,7 +66,7 @@ cout<<j; //prints 5
 
 - the big difference between references and values is that values have their own copy of the data, and the reference reuses the object it is initialized with without making a copy
 	- both `i` and `j` can be used the same way to refer to the same way after creation
-WARNING: object lifetime: if multiple variables refer to the same object, you have to be careful, that the object still exists when you use it
+- WARNING: object lifetime: if multiple variables refer to the same object, you have to be careful, that the object still exists when you use it
 
 ```
 int &f() //f is a function returning a reference to an int
@@ -83,27 +80,26 @@ cout << j; //undefined behavior!
 
 ```
 
-C++ programmers must manage the lifetime of objects explicitly
+## C++ programmers must manage the lifetime of objects explicitly ##
 - not a garbage collected language like Java
 - if memory is released too early, the program can crash from attempting to use an object that no longer exists
 - if memory is not released when it is no longer needed, the program can run out of memory (memory leak)
 
-C++ has built-in commands to dynamically create and destroy objects
+## C++ has built-in commands to dynamically create and destroy objects ##
  - `new` and `delete`
 	 - should be rarely used
 - should utilize a scoped ownership model
 	- most import idiom in C++: RAII
 
-"Automatic manual memory management"
+## "Automatic manual memory management" ##
 - most common abstraction - `unique_ptr`
-
-`make_unique<T>` creates an object in memory on demand and returns a handle to the object of type `unique_ptr<T>` that can be used to reference the object
+- `make_unique<T>` creates an object in memory on demand and returns a handle to the object of type `unique_ptr<T>` that can be used to reference the object
 ```
 //Create an int in memory and return an associated unique_ptr
 unique_ptr<int> ui = make_unique<int> (5);
 ```
 
-unique_ptrs give you access to the data in the object
+## `unique_ptrs` give you access to the data in the object ##
 - when you need to reference the object managed by the unique_ptr, use the `*` operator
 ```
 unique_ptr<int> ui = make_unique<int>(5);
@@ -120,7 +116,7 @@ cout >> *ui; //Prints 2
 ```
 - the `unique_ptr` automatically releases the memory of the first object (with value 5) and then starts managing the new object (with value 2)
 
-Transferring ownership
+## Transferring ownership ##
 - can't simply assign
 	- `up2=up1; // Doesn't work, two "unique" owners"`
 - correct solution: move from `up1`
@@ -130,9 +126,8 @@ Transferring ownership
 		- covered later in the course
 		- should only be used in systems programming that requires low-level manipulation
 
-**CLASSES**
+# CLASSES #
 - C++ would be a very limited language if we couldn't define our own types
-
 - To create your own type in C++, you must define a class:
 ```
 struct Student_Info {
@@ -141,7 +136,6 @@ double midterm, final;
 vector<double> homework;
 }; //required
 ```
-
 - difference from C:
 	- no need to add `typedef struct Student_info Student_info;`
 - the only difference between a `struct` and a `class` is different default visibility of members. This is the equivalent class:
@@ -200,9 +194,8 @@ return (midterm+final+median(homework))/3;
 };
 ```
 
-
-you can also put methods in separate files, i.e. declare class definition in .h file, declare the method in the .cpp file
-- you have to `#include` the header file in the other one (leverage the pre-processor)
+- you can also put methods in separate files, i.e. declare class definition in .h file, declare the method in the .cpp file
+	- you have to `#include` the header file in the other one (leverage the pre-processor)
 ```
 // In .h file  
 struct Student_info {  
@@ -228,14 +221,14 @@ s.homework.push_back(60);
 s.homework.push_back(75);  
 cout << s.grade();
 ```
-a program uses expressions to refer to objects in memory
-- the static type is the type of expression
-	- known at compile time
-- the dynamic type is the type of the actual object referred to by the expression
-	- may only be knowable at run-time
-- static and dynamic types generally only differ due to inheritance
+- a program uses expressions to refer to objects in memory
+	- the static type is the type of expression
+		- known at compile time
+	- the dynamic type is the type of the actual object referred to by the expression
+		- may only be knowable at run-time
+	- static and dynamic types generally only differ due to inheritance
 
-Single inheritance
+## Single inheritance ##
 - inheritance can be used to model an "isA" relationship
 ```
 struct Animal { /* ... */ };
@@ -256,7 +249,7 @@ ua = make_unique<Falcon>();
 // Now S = Animal, D = Falcon
 ```
 
-Virtual vs. non-virtual method
+## Virtual vs. non-virtual method ##
 - a virtual method uses the dynamic type
 - non-virtual method uses static type
 ```
@@ -285,7 +278,7 @@ a.h(); // Error: h is not in animal
 - this is very clunky, but has a special shortcut notation:
 	- `g->f() // Identical to (*g).f()`
 
-**Leveraging virtual methods to add multiple grading strategies**
+## Leveraging virtual methods to add multiple grading strategies ##
 ```
 struct Abstract_student_info { // In header  
 string name;  
@@ -309,7 +302,7 @@ return (midterm + final)/2; // Ignore the HW
 };
 ```
 
-**Virtual Method Performance**
+## Virtual Method Performance ##
 - a virtual function is called based on the runtime type of the object even if it is accessed through a base class pointer
 	- you may have heard virtual functions have one more indirection
 		- you don't need to worry about performance
@@ -328,25 +321,25 @@ return (midterm + final)/2; // Ignore the HW
 
 
 the first rule of optimization is:
-##### don't#####
+DON'T
 - highly-optimized code is generally harder to read and maintain
 - there is no point in optimizing something that is not a bottleneck
 	- benchmark to find the bottlenecks, then decide whether they're worth optimizing
 
-C++ has the `<chrono>` library to work with time
+## C++ has the `<chrono>` library to work with time ##
 - can use `system_clock::now()` to get start and end times
 	- may not always be a good option
 
-"as-if" rule
+## "as-if" rule ##
  - as long as it behaves as if it did things the right way, the compiler can reorder code however it wants
 	 - this means that if you start your code with a `system_clock::now()` and then calculate the difference at the end of your code, the compiler may move your `system_clock::now()`s right next to each other
 
-be cautious about timestamps, use proper benchmarking tool
- - Google Benchmark
- - Nonius
- - gprof
+- be cautious about timestamps, use proper benchmarking tool
+	 - Google Benchmark
+	 - Nonius
+	 - gprof
 
-**order of construction**
+## Order of construction ##
 1. Virtual base classes first
 2. Base class constructors
 	1. run in the order they are declared
@@ -356,7 +349,7 @@ be cautious about timestamps, use proper benchmarking tool
 	- **Best Practice** don't relay on it, don't use virtual functions in constructors
 
 
-avoiding spaghetti inheritance
+## Avoiding spaghetti inheritance ##
 - number of classes can grow exponentially
 - better to create one class that can covers as many edge cases as possible if possible
 
