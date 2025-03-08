@@ -1,16 +1,14 @@
 
-**C++ Algorithms*
+# C++ Algorithms #
 - there are some standard library ones
 	- `std::transform`
 	- `std::accumulate`
 	- `std::inner_product`
-- C++ algorithms are designed to interact with lambdas
-	- There are some issues with the model of C++ algorithms
-		- lack of compositionality
-			- how can this be addressed?
-
-
-**Callables**
+## C++ algorithms are designed to interact with lambdas ##
+- There are some issues with the model of C++ algorithms
+	- lack of compositionality
+		- how can this be addressed?
+## Callables ##
 - it is often good to pass things that can be called
 	- what can be called?
 		- functions - `double f(int i) { return 3.2 * i; }`
@@ -33,7 +31,7 @@ int z = x + y; return z + x;
 }
 ```
 
-**Capture lists**
+## Capture lists ##
 - to capture local variables by reference, use `[&]`
 - to capture local variables by value, use `[=]`
 ```
@@ -82,7 +80,7 @@ int &i;
 };
 ```
 
-**Polymorphic lambdas**
+## Polymorphic lambdas ##
 - lambdas are able to take auto parameters and utilize type inference on them
 	- `[](auto x) { return x*x; }(7); // 49`
 	- `[](auto x) { return x*x; }(7.5); // 56.25`
@@ -104,9 +102,8 @@ vector v = {2, 5, 6, 9};
 cout << v.count_if([](int i) { return i%2 == 0; });
 ```
 
-Captures can also be helpful as well:
-
-- to use a for loop to draw a hand of cards for each player:
+- Captures can also be helpful as well:
+	- to use a for loop to draw a hand of cards for each player:
 ```
 CardDeck d;  
 vector<Person> players;  
@@ -121,7 +118,7 @@ vector<Person> players;
 for_each(players, [&](auto p) {p.hand = d.draw(); }
 ```
 
-**Functors**
+## Functors ##
 - if you write your own class with an overloaded `operator()`, it's called a `functor`
 	- allows you to create stateful objects that can be called like functions
 ```
@@ -135,12 +132,12 @@ cout << acc(2); // Prints 3 = 1+2
 cout << acc(4); // Prints 7 = 1+2+4
 ```
 
-A lot more things than functions can be called:
-- function
-- lambda
-- functor
+- A lot more things than functions can be called:
+	- function
+	- lambda
+	- functor
 
-More C++ algorithms
+## More C++ algorithms ##
 - `all_of`
 - `any_of`
 - `none_of`
@@ -187,12 +184,12 @@ is_prime);
 - `is_heap`, `is_heap_until`, `is_sorted`, `is_sorted_until`, `partial_copy`
 	- ranged versions of `move`
 
-many standard library algorithms can be run in parallel
+## Many standard library algorithms can be run in parallel ##
 - pass them a parallel execution policy
 	- `sort(execution::par_unseq, v.begin(), v.end());`
 		- parallel sort that can take advantage of GPUs
 
-C++ algorithms are powerful with some issues
+## C++ algorithms are powerful with some issues ##
 - they're getting increasingly problematic as functional programming gets more popular
 	- they can't be composed
 		- you can't transform then accumulate the same vector
@@ -205,7 +202,7 @@ C++ algorithms are powerful with some issues
 		- lazy for efficiency (don't have to create intermediate containers)
 		- fully conceptized
 
-**Best Practices on special member functions**
+# Best Practices on special member functions #
 - even if you don't write them, the compiler automatically generates a:
 	- copy constructor
 ```
@@ -224,19 +221,19 @@ x2 = x1;
 struct X { ~X(); /* ... */ };
 ```
 
-known as "The Rule of Three"
+## Known as "The Rule of Three" ##
 - although these are generated automatically by the compiler, the built-in ones often aren't what you want
 	- typically when you need special behavior like a deep copy
 		- usually need a deep copy assignment
 			- and a corresponding deep destruction
 - in general, if you define one, you should consider whether you have to define all three
 
-**Rule of the Big Two**
+## Rule of the Big Two ##
 - you generally don't need to work about the destructor if the member destructors clean everything up
 	- will be generalized with the RAII principle
 
 
-**Base classes should have virtual destructors**
+## Base classes should have virtual destructors ##
 - if the class is designed to be inherited from, the destructor must be virtual
 	- if you don't, classes that inherit from your base class won't have destructors
 ```
@@ -246,7 +243,7 @@ virtual ~Animal() = default;
 };
 ```
 
-**Templates**
+# Templates #
 - there are several ways to write code that apply same behavior across different types
 	- object-orientation and templates
 - template and generics are used more or less interchangably
@@ -263,7 +260,7 @@ a function template is not exactly a function, it is a template to allow the com
 
 Object Oriented Programming and templates can solve similar problems:
 
-**Concepts(())
+## Concepts ##
 - concepts play the analogous role for generic programming that classes do in OO programming
 - allows you to specify must-satisfy conditions for the template
 ```
@@ -276,19 +273,17 @@ concept Animal = requires(T a) {
 
 "Generic programming should just be normal programming"
 
-**Kinds of templates**
+## Kinds of templates ##
 - function templates
 	- `std::sort`
 - Class templates
 	- `std::vector`
 - Variable templates
-
-To learn about class templates, we'll create a "dense" matrix library
-- if you have a class template, there are no arguments
-	- need to put them in a template header
-- can use a concept
-
-**Sometimes you need a more verbose notation**
+- To learn about class templates, we'll create a "dense" matrix library
+	- if you have a class template, there are no arguments
+		- need to put them in a template header
+	- can use a concept
+## Sometimes you need a more verbose notation ##
 - for function templates, we could simply use "concept auto" arguments
 - if you have a class template, there are no "arguments", so you put them up front in a "template" header
 	- useful if you need a name for the type
@@ -300,7 +295,7 @@ template<typename T> // Simple vector def
 struct vector { /* ... */ };
 ```
 
-**Initializer lists**
+# Initializer lists #
 - one of the issues with vectors used to be that it was difficult to initialize them
 ```
 / Yuck!  
@@ -321,7 +316,7 @@ vector v = { 1, 2, 3, 4};
 The secret sauce for C++ templates is that if the generic definition of the template isn't what you want, you can override it for the specific case
 - compile-time analog to overriding a general method in a base class in a more specialized derived class
 
-**Matrix determinants**
+# Matrix determinants #
 the determinant of a matrix is a number that represents how much a matrix transformation expands it input
 - Laplace expansion
 - we can just use a formula for smaller matrices
@@ -332,7 +327,7 @@ A function, class or member can be fully specialized
 
 function templates can be overloaded
 
-**Partial specialization**
+## Partial specialization ##
 - only classes may be partially specialized
 - Template class:
 ```

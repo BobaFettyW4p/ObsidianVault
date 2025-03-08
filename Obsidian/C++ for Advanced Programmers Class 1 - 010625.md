@@ -5,13 +5,13 @@
 Michael Spertus
 - mike@spertus.com
 
-**Course Info**
+# Course Info #
 Mike - teaches the Generative AI and Big Data Application Architecture course
 
 *The best way to learn C++ is to join the standards committee*
 - costs ~2k
 
-**Useful Resources**
+# Useful Resources #
 
 - language standard - https://eel.is/c++draft/
 - http://isocpp.org/
@@ -29,7 +29,7 @@ Mike - teaches the Generative AI and Big Data Application Architecture course
 - C++ section of StackOverflow
 - cppreference.com, /r/cpp
 
-**Useful Books
+## Useful Books ##
 
 Bjarne Strousroup - A Tour of C++ 3rd edition
 - Programming: Principles and Practices
@@ -38,7 +38,7 @@ Anthony Williams, C++ Concurrency in Action
 
 CWhy - useful tool to diagnose error messages
 
-**Weekly Schedule
+## Weekly Schedule ##
 
 HW and lecture notes - published on Canvas Tuesday morning
 HW due on Monday before class on Gradescope
@@ -50,21 +50,21 @@ backwards homework
 	- if you struggle on the HW, then you totally understand when you get it on the HW
 	- it will always be possible to do HW with the material we have received, but you'll be prepared for the next class
 
-**Discussion Group
+## Discussion Group ##
 
 - Ed tab on Canvas
 - post privately if it's about homework
 
-Grading
+## Grading ##
 - 2/3 HW
 - 1/3 final - actually has the biggest impact on your grade
 
-programming the cache?!?!
-- Red Panda is a C++ implementation of Kafka
-	- 10x as fast, 10x as cheap
-	- main difference: C++ is native, can focus on access data in cache and process affinity
+- programming the cache?!?!
+	- Red Panda is a C++ implementation of Kafka
+		- 10x as fast, 10x as cheap
+		- main difference: C++ is native, can focus on access data in cache and process affinity
 
-huge gaps in C++
+# huge gaps in C++ #
 - no networking
 - No thread pools
 - Asynchronous programming broken until C++26
@@ -73,8 +73,7 @@ huge gaps in C++
 	- no serialization, RPC, etc
 - too many things still require unsafe code
 
-**Safety
-
+# Safety #
 - C++ isn't safe
 	- lets you access memory location directly by address
 		- "pointers"
@@ -86,7 +85,7 @@ huge gaps in C++
 - C++20/23
 	- "feels like a new language"
 
-**Characteristics of C++
+# Characteristics of C++ #
 - Compiled
 - Multiparadigm
 - Lightweight abstractions
@@ -94,31 +93,31 @@ huge gaps in C++
 - Statically typesafe and type inferenced
 - Exceptions, Expected, and RAII
 
-**C++ is a Compiled language
+## C++ is a Compiled language ##
 - uses "Ahead of Time" compilation
 	- have to manually compile before running
 	- can be much faster
 	- enables "metaprogramming" the compiler to control code generation
 
-**Multiparadigm
+## Multiparadigm ##
 - C++ is not an object oriented language
 	- but it does support OOP
 	- also supports other paradigms
 		- standard library prefers compile-time dispatch (templates)
 
-**C++ is a lightweight abstraction language
+## C++ is a lightweight abstraction language ##
 - languages typically fall into a tradeoff between being good for programmers (abstract) and good for computers (low memory, fast, low level)
 - we need both as both loom over programming decisions
 	- need to be able to decide as needed
 		- can create powerful abstractions with all abstraction "compiled away" using templated
 		- no performance penalty associated
 
-**Delivering performance and abstraction
+## Delivering performance and abstraction ##
 - allows low-level manipulation of code and data
 - use compile-time computation to generate optimal code
 - C++ has no equivalent of scripting or iPython notebooks
 
-how do we copy data from one data structure to another?
+## How do we copy data from one data structure to another? ##
 - in C, we can copy the underlying memory with `memcpy` to get low-level performance
 	- fast, but not abstract
 	- not fit for prod programs that are complex and need to be adapted over time
@@ -127,12 +126,12 @@ how do we copy data from one data structure to another?
 		- have to manually write deep copy commands
 			- complicated, time-consuming and brittle implementation details
 
-C++ classes can be considered the way you create your own types
+## C++ classes can be considered the way you create your own types ##
 - a copy constructor teaches the compiler the correct way to copy objects
 	- abstract: copy any object with an assignment, independant of implementation
 	- lightweight: compiler generates the code, so it's just as efficient of doing it manually
 
-C++ std library provides a standard copy function
+## C++ std library provides a standard copy function ##
 - `std::copy`
 - ultimate in abstraction
 	- copies from anything to anything else, can do deep copies
@@ -143,7 +142,7 @@ C++ std library provides a standard copy function
 			- will simply use `memcpy` if that is sufficient
 				- 800% performance improvement in some cases
 
-Static type safety and inference
+## Static type safety and inference ##
 - Python is unsafe in a different way
 	- any variable can hold any type of object
 		- "dynamic typing"/"duck typing"
@@ -173,7 +172,7 @@ auto a  = "foo"s; // compiler will deduce a is a string
 a = 7; // Ill-formed, will not compiled
 ```
 
-Exceptions, Excepted, and RAII
+## Exceptions, Excepted, and RAII ##
 - proper error handling and clean up takes ~40% of C development time
 	- C++ offers a variety of abstractions to handle this and reduce that time
 
@@ -181,9 +180,8 @@ Exceptions, Excepted, and RAII
 
 
 
-**Starting from "Hello World"
-
-- don't need to use a specific compiler or IDE
+# Starting from "Hello World" #
+- don't need to use a specific compiler or IDE to write C++
 	- Advantages:
 		- get comfortable and use your preferred environment and toolchain
 			- learn how portable C++ code is
@@ -191,13 +189,13 @@ Exceptions, Excepted, and RAII
 	- Disadvantage:
 		- you will have to install and configure it according to your choices
 
-What compiler should you use
+## What compiler should you use? ##
 - any modern compiler with support for C++20
 	- Clang, g++, and Visual C++ all work
 		- may need to set a `-std=c++20` flag
 	- VSCode, CLion, godbolt.org
 
-# HelloWorld.cpp
+## HelloWorld.cpp ##
 ```
 #include <iostream>
 
@@ -210,13 +208,13 @@ return 0;
 ```
 
 
-**CMake
+## CMake ##
 - you are free to build however you want
 	- CMake is the most common way to manage the complexity of building
 		- "meta build" system for any compiler and operating system
 		- CMake tends to introduce it's own complexity
 
-**CMakeLists.txt
+## CMakeLists.txt ##
 - you describe a project with a \CMakeLists.txt
 - for HelloWorld.cpp:
 ```
@@ -231,7 +229,7 @@ add_executable(hello_world hello.cpp)
 	- `cmake --build ./build` - builds the binaries and stores them in `./build` according to the requirements
 	- can leverage VSCode to simplify this
 
-**A More Personalized Greeting
+## A More Personalized Greeting ##
 ```
 #include<iostream>
 #include<format>
@@ -251,7 +249,7 @@ return 0;
 - this may or may not compiled based on the library
 - `<format>` was added in C++ 20, but not all compilers have implemented it, but there is an alternative...
 
-**{fmt}
+## {fmt} ##
 - widely used open source library that implements format in C++ when the compiler doesn't
 	- a little ugly to download a "standard" library, but worth it
 		- many C++ projects already doing this
@@ -261,9 +259,7 @@ return 0;
 	- `#include<fmt/format.h`
 	- `using namespace fmt;`
 
-
-
-The preprocessor
+## The preprocessor ##
 - `#include`and `#define` are commands to the C++ preprocessor, that do simple cut and paste on text
 - `#include foo.h` cuts and pastes foo.h directly into the including file
 	- this technique is used in a lot of standard library implementations
@@ -275,25 +271,26 @@ The preprocessor
 	- how should an IDE refactor?
 	- C++ has been adding features to eliminate the need to use the preprocessor
 
-C++ lets you separately compile and link libraries
+## C++ lets you separately compile and link libraries ##
 - can speed compilation, complexifies build process
 - {fmt} can be used as a linkable library, or in header only mode, where the preprocessor pastes in all the code
 
-C++ has a variety of ways of defining and initializing variables
+## C++ has a variety of ways of defining and initializing variables ##
 - will be covered
 - `int i=5 //i is an int initialized to 5`
 - `i=7 // i is now 7`
 - `i="Hello; //this is an error, C++ is a statically typed language`
 - `auto j=3; //j is an int`
 
-why do they call it a double?
+## Why do they call it a double? ##
 - floating points were a big problem for computers until relatively recently
 	- when C/C++ were being invented, floats were a lot smaller to be able to do floating point arithmetic
 	- there are many more gates on a chip, to create a double precision floating point
 		- modern computers can process these in much faster times
 			- progression to half-width floating points
 				- modern neural nets don't need to be that precise
-**Defining functions
+
+# Defining functions #
 ```
 int square(int n)
 {
@@ -314,7 +311,7 @@ return n*n;
 //this can replace both above square() functions; compiler will infer return type based on inputs to square()
 ```
 
-C++ is statically typesafe, largely type inferenced
+## C++ is statically typesafe, largely type inferenced ##
 - powerful generic mechanism known as templates
 	- templates let you give a name to a not yet specified type and allow the compiler to infer that type as needed
 	- give simplicity of untyped types with the safety of compiled-time type validation
@@ -343,7 +340,7 @@ return square(2) + square(3.1416); // also okay for the same reasons as above
 }
 ```
 
-**Containers: vector
+# Containers: vector #
 - `std::vector` is in fact a class template, so the compiler can build a version optimized for each class
 ```
 vector<int> v = {1,2,3}; //type can be specified

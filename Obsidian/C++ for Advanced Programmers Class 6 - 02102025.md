@@ -4,42 +4,42 @@
 - don't use `std::ostringstream`, use `std::format`
 - if you don't want to join a thread, but want it to run to completion, you `.detach()` it
 
-**Distributed counter**
+# Distributed counter #
 - a counter that can be incremented or read by any thread
 	- seems simple, has a lot of complexity
 - you can make a `shared_mutex` to keep different `DistributedCounter` objects from interfering with each other
 	- need to declare them with the `mutable` keywork:
 		- `shared_mutex mutable mtx;`
-- logical constness
-	- would like `DistributedCounter::get()` to be `const`
-		- seems illogical that simply reading the current value modifies the object
-			- however, getting the reader lock, modifies the state of the `mtx` member of the counter object
+## logical constness ##
+- would like `DistributedCounter::get()` to be `const`
+	- seems illogical that simply reading the current value modifies the object
+		- however, getting the reader lock, modifies the state of the `mtx` member of the counter object
 			- thus, we label it `mutable`
 				- we don't want changes to `mtx` to be changes to the state modeled by the counter
-**Amdahl's law
+## Amdahl's law ##
 - the more sequential tasks in a program, the less it benefits from parallelism
 ![[Pasted image 20250306193445.png]]
 
 
-**Cache Conscious Programming**
+# Cache Conscious Programming #
 - accessing main memory can take processors hundreds of cycles
 - processors use high-speed caches to maintain local copies of data
 - if another processor needs to R/W that memory, other processors have to flush or invalidate cached copies of that memory
 
-**Cache lines and false sharing**
+## Cache lines and false sharing ##
 - when memory is moved from memory to cache, enough data is always moved to fill a "cache line"
 	- this varies greatly by processor, but is typically 32 bytes
 	- if 2 processors are modifying data within 32 bytes (or whatever the cache line is), they are constantly forcing each other to invalidate their cache
 		- this is known as "false sharing"
-**How can we eliminate false sharing?**
+### How can we eliminate false sharing? ###
 - independent objects must reside on independent cache lines
 	- a single memory location can only be mapped to a single cache line
 	- this is typically accomplished by adding padding between objects
-**Direct-Mapped Caches**
+## Direct-Mapped Caches ##
 - often a single memory location can only be mapped to one or two possible cache lines
 	- not understanding this can have severe consequences...
 
-**Ghostscript**
+### Ghostscript ###
 - ghostscript is a popular postscript rendering program written by Peter Deutsch
 	- `malloc()/free()` performance is critical in postscript
 		- luckily, Peter Deutsch was a memory management expert
@@ -51,7 +51,7 @@
 				- when it was utilized on a machine with direct-mapped caches, all the freelist pointers mapped to the same cache line
 				- ghostscript was spending about 1/3 of its time in cache misses
 
-**How does C++ handle cache-conscious programming?**
+## How does C++ handle cache-conscious programming? ##
 - you can make an educated guess, but that's brittle
 	- if you guess the wrong amount, it might not work
 - C++17 introduced a more portable approach
@@ -60,7 +60,7 @@
 	- `std::hardware_constructive_interference_size`
 		- if objects are closer than it, they "should" end up on the same cache line
 
-**Cache-Conscious Programming**
+## Cache-Conscious Programming ##
 - objects or fields that are accessed independently should be aligned and padded so they end up on different cache lines
 - keep read-only data separate from data that is modified frequently
 - When possible, split an object into thread-local pieces
@@ -71,7 +71,7 @@
 - If a struct contains a large chunk of data whose size is divisible by a high power or two, consider separating it out of the class and holding it with a `unique_ptr` to avoid Ghostscript problem
 - use a profiling tool like VTune to identify cache bottlenecks
 
-**CTAD**
+# CTAD #
 - Class Template Argument Deduction
 	- you can use `lock_guard l(mtx);` instead of the more clumsy `lock_guard<mutex> l(mtx);`
 	- usually with classes, you have to specify the template arguments, as in `Matrix<double,3>`
@@ -99,7 +99,7 @@ lock_guard l(m); // MutexType must be std::mutex
 - CTAD has advanced features like deduction guides
 	- not germane to this class
 
-**Move semantics**
+# Move semantics #
 - How to pass an argument
 	- pass by value
 		- `void f(X x);`
@@ -109,7 +109,7 @@ lock_guard l(m); // MutexType must be std::mutex
 		- `void f(X &&x);`
 - most languages use one by default, C++ has all three and (makes|lets) you choose which
 
-**What does it mean to move an object
+## What does it mean to move an object ##
 - moving `y` to `x`
 	- `x = move(y);`
 	- this means that the value of `x` is the same as the value `y` started at
@@ -123,7 +123,7 @@ lock_guard l(m); // MutexType must be std::mutex
 ![[Pasted image 20250306202749.png]]
 
 
-**Semantic argument to move rather than copy**
+### Semantic argument to move rather than copy ###
 - some classes don't make sense to copy and therefore have deleted copy constructors
 ```
 struct X {  
@@ -147,8 +147,8 @@ X(X const &) = delete;
 	- the only other way is if `std::move` is used to indicate it's okay to move from
 		- `auto y = move(x); // now y owns the x object`
 
-- How does move work?
-	- Rvalue references
+### How does move work ###
+- Rvalue references
 	- A reference with `&&` instead of just `&` can bind to a temporary value and move it elsewhere
 	- objects are often much cheaper to "move" than copy
 		- for example, deep copying a tree
@@ -163,9 +163,9 @@ b = move(tmp); // could invalidate tmp
 }
 ```
 
-- how do I make a type movable?
-	- you don't, it is a performance optimization because C++ will just copy if there are no move operations
-		- if moving is more efficient, you should create move constructors and move assignment operators
+#### How do I make a type movable? ####
+- you don't, it is a performance optimization because C++ will just copy if there are no move operations
+	- if moving is more efficient, you should create move constructors and move assignment operators
 ```
 template<class T> class vector {  
 // ...  
@@ -185,7 +185,7 @@ S(S &&) = default; // Gets it back
 };
 ```
 
-Summary: Three ways of copying
+## Summary: Three ways of copying ##
 - by value
 	- the function gets its own copy
 		- `void f(int i) { i += 2; }`
@@ -196,7 +196,7 @@ Summary: Three ways of copying
 	- if the function is called on a temporary
 		- `void f(X &&x) { ... }`
 
-**The Rule of Five**
+## The Rule of Five ##
 - discussion to expand the rule of three to the rule of 5
 	- if you define any of...
 		- destructor
@@ -208,17 +208,17 @@ Summary: Three ways of copying
 		- you may need to define them
 		- they are all related
 
-**How is `std::move` implemented?
+## **How is `std::move` implemented? ##
 - yet another way of "argument passing"
 - if `&&` is used in a template argument, it means "forwarding reference", which binds to an rvalue reference or a regular lvalue reference
 - Template type deduction takes place according to the following "collapsing rules" which are only applied in templates
 	![[Pasted image 20250306204107.png]]
-**Perfect forwarding**
+# Perfect forwarding #
 - a lot of times you want to wrap a function and pass your arguments to it
 	- "every problem in programming can be solved with another layer of indirection"
 - this is surprisingly difficult because you have to properly forward all the different ways of passing parameters
 
-**A naive `make_unique` implementation**
+## A naive `make_unique` implementation ##
 ```
 template<typename T, typename Arg>  
 unique_ptr<T> makeUnique(Arg arg)  
@@ -228,7 +228,7 @@ return unique_ptr<T>(new T(arg));
 ```
 - this code assumes that T takes one constructor argument
 	- it could take one or fewer
-**Our first improvement: Variadics**
+### Our first improvement: Variadics ###
 - C++ lets you use `...` to indicate a "pack" of template parameters
 	- basic use is straightforward:
 ```
@@ -252,7 +252,7 @@ int i = 2;
 auto xp = makeUnique<X>(i); // i is still 2
 ```
 - since `makeUnique` inferred that `Args...` is `int` it passed `i` by value
-**What if we took our arguments by reference?**
+### What if we took our arguments by reference? ###
 ```
 template<typename T, typename... Args>  
 unique_ptr<T> makeUnique(Args &... args)  
@@ -295,7 +295,7 @@ constexpr T&& forward(remove_reference_t<T>&& t )
 { return t; }
 ```
 
-**Low-level and Systems Programming**
+# Low-level and Systems Programming #
 - Pointers
 	- low level way to refer to a location in physical memory
 		- for the most part, one should use references and higher-level lightweight abstractions like `unique_ptr`
@@ -306,13 +306,13 @@ constexpr T&& forward(remove_reference_t<T>&& t )
 				- currently not possible
 				- `observer_ptr` is a possible future solution
 
-**C++ sometimes forces you to use a pointer**
+## C++ sometimes forces you to use a pointer ##
 - `this` is a pointer
 	- better to use `*this`
 - `main(int argc, char **argv)` uses pointers to pointers to pass command line arguments
 	- this is to maintain C compatibility
 
-**When do we need pointers?**
+### When do we need pointers? ###
 - low level programming
 	- C++ is a systems programming language
 		- may need to access memory directly
@@ -320,14 +320,14 @@ constexpr T&& forward(remove_reference_t<T>&& t )
 	- nearly all can be handled with `unique_ptr` and `shared_ptr`
 	- there are situations they don't cover, which is where raw pointers come in
 
-- Pointers to a type contain the address of an object of the given type
+### Pointers to a type contain the address of an object of the given type ###
 `A *ap = new A();`
 - `ap` contains the address of an object of type `A` in memory
 - `new A()` constructs an object of type `A` in memory and returns its address
 - `new A()` has the same relation to `A *` as `make_unique<A>()` has to `unique_ptr<A>`
 - `A a; ap = &a; // & is the addressof operator`
 
-- pointers can be dereferenced with `*`
+### Pointers can be dereferenced with `*` ###
 	- `A a = *ap;`
 		- `->` is an abbreviation for `(*_)`
 		- `ap->foo(); //Same as (*ap).foo()`
@@ -353,7 +353,7 @@ auto x = f(0); // Calls f(int)
 auto x = f(nullptr); // Calls f(char *)
 ```
 
-**pointer arithmetic** 
+### Pointer arithmetic ### 
 - technically possible:
 ```
 // Arrays decay to a pointer to the 0th element  
@@ -363,7 +363,7 @@ A *aap = new A[10];
 - this doesn't add 5 to the address, but adds enough to get the 5th element, starting at 0
 - generally try to avoid this; it's better to use lightweight abstractions like `std::array` or `std::vector`
 
-**C Strings**
+## C Strings ##
 - C-style string literals give you pointers
 - `"foo"` is actually a literal of type `char const[4]`
 ```
@@ -373,7 +373,7 @@ cout << cp[1]; // prints o
 - not nearly as powerful or typesafe as C++ strings, which have many methods
 	- a good habit to use C++-string literals
 		- `auto s = "foo"s; // s is a std::string`
-`string_view`
+### `string_view` ###
 - There are a lot of ways to express text in C++
 	- `std::string`
 	- A C string( `char const *`)
@@ -415,9 +415,9 @@ f(sv); // Ill-formed! Copy initialization
 ```
 - Solution: `f` should take a `string_view`
 
-- Raw string literals
-	- when you have a long string, is sometimes painful to constantly escape internal quotations and backslashes
-		- a quoted string cannot extend across multiple lines
+### Raw string literals ###
+- when you have a long string, is sometimes painful to constantly escape internal quotations and backslashes
+	- a quoted string cannot extend across multiple lines
 	- general form is `R"delim(text)delim"`
 		- `delim` is whatever you want; use it to avoid collisions:
 ```
@@ -434,7 +434,7 @@ int main()
 })";
 ```
 
-**pointers to functions**
+## pointers to functions ##
 - usually describe a type by how it is used:
 ```
 int *ip; // Means *ip is an int
@@ -471,8 +471,8 @@ void foo(double);
 void bar(double);  
 };
 ```
-- we would like to be able to point to a particular member of `A`
-	- not an address because we haven't specified an `A` object
+## We would like to be able to point to a particular member of `A` ##
+- not an address because we haven't specified an `A` object
 	- more like an offset into `A` objects:
 ```
 int A::*aip = &A::i;  
@@ -483,7 +483,7 @@ ap->*aip = 3; // Set ap->i to 3
 (a.*afp)(3.141592); // Calls a.foo(3.141592)
 ```
 
-- Pointers to member functions:
+## Pointers to member functions ##
 ```
 vector<Animal *> zoo;  
 zoo.push_back(new Elephant);  
@@ -514,7 +514,7 @@ for (auto it = zoo.begin(); it != zoo.end(); it++) {
 }
 ```
 
-**References**
+## References ##
 - like pointers but different
 	- References allow one object to be shared among different variables
 	- they are set on creation and never changed
@@ -527,7 +527,7 @@ int &j;
 };
 ```
 
-**Not all callables can be assigned to a function pointer**
+### Not all callables can be assigned to a function pointer ###
 - can only assign a lambda to a function pointer if it does not have a capture list
 - can't assign a functor to a function pointer
 ```
@@ -550,13 +550,13 @@ cout << "The average home price is ";
 cout << averager(getHomePrices()) << endl;
 ```
 
-`std::function`
+## `std::function` ##
 - in C++, functions aren't the only thing that can be called
 	- function
 	- lambda
 	- functor
 	- member function
-- **`std::function` can hold anything callable**
+### `std::function` can hold anything callable ###
 ```
 struct WeightedMean {  
 WeightedMean(vector<double> const &weights)  
@@ -602,100 +602,13 @@ fn_apply(WeightedMean({1.2, 3.4}), {1.7, 2.3}) // OK
 }
 ```
 
-- how does `unique_ptr` work?
-	- suppose `auto ap = make_unique<A>(1,2);`
-		- how does this get created under the hood?
+## How does `unique_ptr` work? ##
+- suppose `auto ap = make_unique<A>(1,2);`
+	- how does this get created under the hood?
 		- First, `make_unique` calls
 			- `new A(1,2)`
 		- the compiler's first step in this "new expression" is to allocate memory
 			- `operator new(sizeof(A))`
 		- finally, it constructs an `A(1,2)` object in the memory that was allocated
 
-`operator new`
-- similar to `malloc` in C in that it allocates the requested number of bytes of memory
-	- `operator new(10)` allocates 10 bytes of memory and returns a `void *` pointing to it
-	- if it fails, it throws a `std::bad_alloc` exception
-
-- Can you use operator overloading?
-	- Yes!
-		- you can use C++ operator overloading to define your own `operator new`s
-			- the standard library defines a couple of useful overloads
-
-- Placement `new`
-	- suppose you already have memory and want to put an object in it
-		- you don't want to use `new A`
-			- the object will be placed someplace else
-				- the standard library provides an oberload that you can tell where you want it to put the object
-```
-void operator new(size_t s, void *p) { return p; }
-new(p) A; // The A object will be at location p
-```
-
-`nothrow new`
-- sometimes you don't want to `new` to throw an exception when allocation fails but return `nullptr` instead
-	- this is similar to C
-	- standard library provides a non throwing overload
-		- `new(std::nothrow) A; //won't throw`
-		- can be applied throughout the entire program, just overload regular `operator new` 
-
-- the problem with `operator new` is that it returns an owning raw pointer
-	- this violates exception safety by not using RAII:
-```
-void f()  
-{  
-// g(A *, A *) is responsible for deleting  
-g(new A(), new A());  
-}
-```
-- if `A` constructor excepts the second time it's called, the first `A` object will be leaked
-
-`make_shared<T>` and `make_unique<T>`
-- they create and object and return an owning pointer
-- these two lines act the same:
-	- `auto ap = make_shared<T>(4,7);`
-	- `shared_ptr<T> ap = new T(4,7);`
-```
-void f()  
-{ auto a1 = make_unique<A>(), a2 = make_unique<A>();  
-// g(A *, A *) is responsible for deleting  
-g(a1.release(), a2.release());  
-}
-```
-- if we can modify `g()`, we really should change it to take a `unique_ptr<T>`
-	- otherwise we have an owning raw pointer
-		- `g()` takes ownership, so it shouldn't use owning raw pointers
-		- `g(make_unique<T>(), make_unique<T>());`
-			- now we can call `g(make_unique<T>(), make_unique<T>());`
-		- the following doesn't work because ownership will no longer be unique:
-```
-auto p1 = g(make_unique<T>();  
-auto p2 = g(make_unique<T>();  
-g(p1, p2); // Illegal! unique_ptr not copyable
-```
-- to fix, we need to move from `p1` and `p2`
-	- `g(move(p1), move(p2)); // OK. unique_ptr is movable`
-**Getting raw pointers from smart pointers**
-- sometimes, you have a smart pointer, but need a raw pointer instead
-	- a function might need the address of an object, but does not want to participate in managing the object's lifetime
-```
-f(A *); // Doesn’t decide when to delete its argument  
-auto a = make_unique<A>{};  
-f(a.get()); // a.get() gives you the raw A *
-```
-
-- sometimes you want to extend the lifetime of an object beyond the lifetime of the `unique_ptr`
-```
-g(A *); // g will delete the argument when done  
-auto a = make_unique<A>{};  
-g(a.release()); // a no longer owns the object
-```
-
-**How to get rid of an object**
-- when you are done with an object, it needs to be destroyed and its memory released
-	- `delete` takes a raw pointer to an object, calls the destructor, and then releases its memory
-```
-Animal *ap = new Elephant();  
-ap->eat();  
-delete ap; // Note: Missed if eat() throws an exception
-```
 

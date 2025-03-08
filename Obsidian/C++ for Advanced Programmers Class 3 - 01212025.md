@@ -1,4 +1,4 @@
-**What Can Go In a Class?**
+# What Can Go In a Class? #
 - previously seen:
 	- ordinary data members (fields)
 	- member functions (methods)
@@ -25,7 +25,7 @@ cout << CountedObject::objectCount; // 2
 - Initializing static class members
 	- you may have to initialize static data members with class types in a separate .cpp file
 		- this ensures its memory is allocated once, not every time the header is included
-Methods are also able to be static
+## Methods are also able to be static ##
 ```
 struct CountedObject {  
 CountedObject() { objectCount++; }  
@@ -41,7 +41,7 @@ CountedObject::objectCount,
 CountedObject::memUsed());
 ```
 
-**Constructors and Destructors**
+# Constructors and Destructors #
 - a Constructor is invoked to create an object
 ```
 // construction.cpp on chalk  
@@ -105,8 +105,8 @@ int i; int j;
 S s; // s.i==0, s.j==1.2
 ```
 
-- Non-Static Data Member Initializers (NSDMI)
-	- you can provide default initializers for members and the default constructor will construct with those values
+## Non-Static Data Member Initializers (NSDMI) ##
+- you can provide default initializers for members and the default constructor will construct with those values
 ```
 struct S {
 int i=0; double j=1.2; //very similar to Python
@@ -115,10 +115,10 @@ S s; //s.i==0, s.j==1.2
 ```
 
 - for technical reasons, static data members cannot be initialized in class
-**What if you don't want a default constructor at all?**
+## What if you don't want a default constructor at all? ##
 - if you define any constructor, the compiler won't generate a default constructor
 
-**Copy Constructors**
+## Copy Constructors ##
 - besides default construction, you are also able to construct a new object by copying an existing one
 ```
 S s;
@@ -137,7 +137,8 @@ S(S const &s) : i(s.i), d(s.d) {}
 int i{}, double d = 1.2;
 };
 ```
-What if the compiler generates the wrong copy constructor?
+
+## What if the compiler generates the wrong copy constructor? ##
 - while convenient, the default copy constructor is not always correct
 - in a binary tree class, the default copy constructor will only copy the root
 	- this leaves us with tangled tree
@@ -151,7 +152,7 @@ BinaryTree(BinaryTree const &b) { /* ... */ }
 };
 ```
 
-**What if I don't want a copy constructor at all?**
+## What if I don't want a copy constructor at all? ##
 - an important design pattern is the "Singleton Pattern"
 	- represents a class that only ever has one object
 		- thus, you would not want a copy constructor at all
@@ -166,12 +167,11 @@ Logger() { /* ... */; }
 };
 ```
 
-**Aggregate construction**
-- what if we wnated to create `S` with specific values for `i` and `d`?
+## Aggregate construction ##
+- what if we wanted to create `S` with specific values for `i` and `d`?
 	- `S s= {5,6.7}`
 	- this is valid C (and thus legal)
 	- what constructor does this call?
-**Aggregate construction**
 - if a class ia simple data structure with public members, C++ considers it to be an aggregate class and generates a constructor that takes an initializer for every field
 	- thus, S behaves as if it had the following constructor:
 ```
@@ -180,7 +180,7 @@ S s = {1, 2.3}; // OK
 S s2 = {.i =1, .d = 5.2 }; // OK. Designated initializer
 ```
 
-**Destructors**
+## Destructors ##
 - classes have Destructor methods that do any needed cleanup when the object goes away
 - when an object in memory goes away, its destructor is always called
 - you can write a destructor for a class:
@@ -197,7 +197,7 @@ if you don't write one, the compiler will generate one for you
 - the default destructor
 	- simply destroys all fields and base classes in the reverse of the order they were created
 
-**unique_ptr**
+# `unique_ptr` #
 - a class that manages an object in memory
 	-  it can give you a reference to the object
 	- the object it manages is always cleaned up when the `unique_ptr` goes away
@@ -214,7 +214,7 @@ sort(up->begin(), up->end());
 	-  memory management is ~40% of C development time, but much less in C++
 - there is a special name for this - RAII
 
-**Sorting algorithms**
+# Sorting algorithms #
 - implementers use different algorithms for `sort` and `partial_sort`
 	- since sorting half the range is pretty close to sorting all of the range, the most efficient sorting algorithm overall is generally going to be best
 		- `partial_sort` is really designed for, say, getting the top 10 out of a million elements
@@ -222,19 +222,19 @@ sort(up->begin(), up->end());
 	- even expert software developers are bad at predicting the performance of code
 		- measure, measure, measure
 
-**Passing arguments to functions and methods**
+# Passing arguments to functions and methods #
 - can pass by reference:
 `istream& Student_info::read(istream&);`
 - as well as by value:
 `istream Student_info::read(istream);`
-**Objects in code and data**
+# Objects in code and data #
 - in program code, objects are used through expressions and variables
 - when the program is run, the actual data objects exist in data memory
 - How are C++ expressions and variables related to the actual objects in memory?
 	- do they have the same type?
 	- do they have the same lifetime?
 	- where is the storage associated with an expression?
-**Associating storage and variables**
+# Associating storage and variables #
 - if an expression or variable has a value type (not a reference type), it gets its own storage
 	- memory is allocated for it and a constructor is run
 	- when the variable or expression leaves scope, it's destructor is run and the memory is released
@@ -243,7 +243,7 @@ sort(up->begin(), up->end());
 
 ![[Pasted image 20250305210509.png]]
 
-**Passing arguments**
+## Passing arguments ##
 - 3 ways to pass arguments to a function in C++:
 	- By value:
 		- `void f(X x);`
@@ -273,14 +273,14 @@ return 0;
 }
 ```
 
-**Why does only C++ make you specify how an object is passed?**
+## Why does only C++ make you specify how an object is passed? ##
 - most languages only have one way of passign arguments
 - in C, always by value
 	- the function gets its own copy
 - in Java, arguments are always passed by reference
 - in Python, arguments are passed by "object-reference"
 
-**Passing by value**
+### Passing by value ###
 - Pros
 	- very safe
 		- the function you call can't actually see the object it is passed
@@ -291,7 +291,7 @@ return 0;
 		- if you copy an `Animal` but it's really a `Gorilla`, your copy only has `Animal` fields (virtual methods may try to reference non-existent `Gorilla` fields)
 	- Sometimes you want to modify the caller's object
 
-**Passing by reference**
+### Passing by reference ###
 - Pros
 	- more efficient
 		- objects don't need to be copied
@@ -306,12 +306,12 @@ return 0;
 
 ![[Pasted image 20250305211321.png]]
 
-**Some other special members**
+## some other special members ##
 - type conversions
 - overloaded operators
 - move constructors
 
-**Implicit Conversions**
+## Implicit Conversions ##
 - built in
 	- `int i = 780;`
 	- `long l = i;`
@@ -326,7 +326,7 @@ return 0;
 - "Standard conversions"
 	- defined in clause 4 of the standard
 
-**Constructors and typecasts**
+# Constructors and typecasts #
 ```
 struct A {  
 A();  
@@ -343,7 +343,7 @@ A a3(5.4); // Calls A(double)
 a3 = 5.5; // Calls A(int)!!
 ```
 
-**Type conversion operators**
+## Type conversion operators ##
 ```
 struct seven {  
 operator int() { return 7; }  
@@ -355,7 +355,7 @@ A a = seven(); // Ill-formed, two user-defined
 // conversions will not be implicitly composed
 ```
 
-**Explicit conversions**
+## Explicit conversions ##
 - Old-style C casts
 	- legal but bad
 	- `char *cp f(void *vp) { return (char *)vp; }`
@@ -374,7 +374,7 @@ A a = seven(); // Ill-formed, two user-defined
 		- can change const-ness or volatileness
 		- usually better alternatives
 
-**Operator overloading**
+## Operator overloading ##
 - operators can be overloaded just like functions
 	- unary operators
 		- `+ - * & ~ ! ++ -- -> ->*`
@@ -387,7 +387,7 @@ A a = seven(); // Ill-formed, two user-defined
 new new[] delete delete[]
 ```
 
-**Which way of overloading addition is better?**
+### Which way of overloading addition is better? ###
 - Consider `"Hello " + myString("World")`
 	- doesn't work for the member function
 		- first object isn't even a class
@@ -405,7 +405,7 @@ myString ms("foo");
 cout << ms;
 ```
 
-**How does an I/O operator get invoked?**
+## How does an I/O operator get invoked? ##
 - `endl` is defined as follows:
 ```
 ostream &  
@@ -417,8 +417,8 @@ return os;
 }
 ```
 
-why does `cout << endl;` actually behave as `endl(cout)`?
-- Another overload:
+- why does `cout << endl;` actually behave as `endl(cout)`?
+	- Another overload:
 ```
 ostream &  
 operator<<  
@@ -429,11 +429,11 @@ return manip(os);
 }
 ```
 
-How does a `unique_ptr` work?
-- by overloading `operator->()` and `operator*()`
-	- `operator->()` operates by doing `->` until it is illegal
+- How does a `unique_ptr` work?
+	- by overloading `operator->()` and `operator*()`
+		- `operator->()` operates by doing `->` until it is illegal
 
-**The C++ Object Lifestyle**
+# The C++ Object Lifestyle #
 - object duration
 	- automatic storage duration
 		- local variables
@@ -506,18 +506,18 @@ static A a3; // Created first time g() is called
 }
 ```
 
-**function-static lifetimes**
+## function-static lifetimes ##
 - a static variable in a function is initialized the first time the function runs
 	- even if it's called from multiple threads, the language is responsible for making sure it only gets initialized once
 	- if the function is never called, the object  is never initialized
 	- static duration objects are destroyed in the reverse order in which they are created
 
-**Dynamic duration objects**
+## Dynamic duration objects ##
 - created and destroyed under the control of the program
 	- allow you to write programs whose data structures can be determined at runtime based on user imput
 	- lifetimes can be controlled with a `unique_ptr`
 
-Static storage duration
+- Static storage duration
 ```
 #include <iostream>  
 using namespace std;  
@@ -536,7 +536,7 @@ int main()
 			- declared by `<iostream>` as `extern ostream cout;`
 			- can't guarantee it's initialized first without `ios_base::init()`
 				- this initializes the standard streams
-**How can we force `cout` to be initialized before `static_a`?**
+## How can we force `cout` to be initialized before `static_a`? ##
 - use a static constructor ourselves:
 ```
 #include <iostream>  
@@ -583,7 +583,7 @@ static ForceInit forceInit;
 ```
 - this is so useful, it's already part of `<iostream>`
 	- as long as we `#include <iostream>` before we call `cout`, we'll be okay
-**What if we want our object to outlive the automatic scope?**
+## What if we want our object to outlive the automatic scope? ##
 - we might want our dynamic object to be longer lived than the `unique_ptr` that manages it
 	- just transfer ownership to a new `unique_ptr`
 		- `up2 = move(up);`
