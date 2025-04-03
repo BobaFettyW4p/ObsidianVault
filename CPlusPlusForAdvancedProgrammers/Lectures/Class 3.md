@@ -141,7 +141,7 @@ int i{}, double d = 1.2;
 ## What if the compiler generates the wrong copy constructor? ##
 - while convenient, the default copy constructor is not always correct
 - in a binary tree class, the default copy constructor will only copy the root
-	- this leaves us with tangled tree
+	- this leaves us with a tangled tree
 		- i.e. two separate root nodes for 2 separate binary tree objects that point to same nodes in the same tree hierarchy
 			- if you delete an object from tree 1, it is also deleted for tree 2 and so on
 		- you have to write your own copy constructor in these cases
@@ -172,7 +172,7 @@ Logger() { /* ... */; }
 	- `S s= {5,6.7}`
 	- this is valid C (and thus legal)
 	- what constructor does this call?
-- if a class ia simple data structure with public members, C++ considers it to be an aggregate class and generates a constructor that takes an initializer for every field
+- if a class is a simple data structure with public members, C++ considers it to be an aggregate class and generates a constructor that takes an initializer for every field
 	- thus, S behaves as if it had the following constructor:
 ```
 struct S { S(int const &i, double const &d) : i(i), d(d) {} ... };  
