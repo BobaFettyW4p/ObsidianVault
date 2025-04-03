@@ -177,5 +177,217 @@ Cooperative v. Competitive resource sharing
 ### Scalability
 - system scalability can be measured along multiple dimensions:
 	- size scalability - we can easily add more users and resources to the system without loss of performance
+		- many services in a distributed system can be considered centralized in the sense that they are implemented by a single server within the system
+			- obvious issues: bottlenecks with the single server can become bottlenecks for the entire system
+				- computational capacity - if there is only a single machine available to perform a service, as requests scale, even a high end system will eventually run out of threads to run them on
+				- I/O bound - even with advanced indexing techniques, processing time will eventually be limited by the relatively slow disk access
+				- network capacity - you're only as fast as the slowest link between the user and a service
 	- geographical stability - users and resources may lie far apart geographic, but communication delays are insignificant
+		- it's difficult to scale distributed systems geographically because many of them are based on synchronous communcation
+			- a party (the client) requests the servers and blocks until a reply is sent back from the server that implements the service
+				- this works fine in LAN when lag is measured in microseconds
+					- in geographically larger systems when response time is measured in milliseconds, this may not be acceptable
+			- another issues is the inherent drop in reliability in communication across geographically disparate systems
+			- additionally, wide area systems generally have limited facilities for multipoint communication
 	- administrative scalability - can still be easily managed even if it spans many independent administrative organizations
+		- many components of a distributed system that reside within a single domain can often be trusted by users within that domain
+			- if a system expands to other domains, security measures must be implemented
+				- the system must protect itself against malicious attacks from the new domain
+				- in addition, the new domain must protect against attacks from the distributed system
+
+#### Scaling Techniques
+- in most cases, scalability problems appear as performance problems caused by limited capacity of servers and network
+	- simply improving their capacity (by increasing memory, upgrading CPUs or replacing network modules) is referred to as *scaling up*
+	- *scaling out* is expanding the distributed system by deploying additional machines
+
+#### Hiding communication latencies
+- applicable in cases of geographical scalability
+	- basic principle: try to avoid waiting for responses to remote-service requests as much as possible
+		- if a request is sent to a server, while waiting for a response, do something else
+			- asynchronous communication
+				- not always feasible - in this case move some communication from the server to the user
+
+#### Partitioning and distribution
+- involves taking a component or resources, splitting into smaller parts, then spreading those parts across the system
+	- DNS is hierarchically organized into a tree of domains, which are divided into nonoverlapping zones
+		- each zone is handled by a single name server
+			- we can think of each path through the the tree as a valid host name on the internet
+
+#### Replication
+- since scalability problems often appear in the form of performance degradation, it's generally a good idea to replicate components or resources across a distributed system
+- replication increases availability and helps balance the load between components
+	- this leads to better performance
+	- in addition, in geographically disparate systems, having a local copy can hide many communication latency issues associated with them
+- *caching* is a special form of replication
+	- caching results in make a copy of a resource (similar to replication)
+		- this decision is made by the client of a resource and not the owner of a resource (different compared to replication)
+- replication has one major drawback: once multiple copies of a resource exist, changes to one copy of the resource has to be replicated to all of the copies to maintain consistent performance across replicas
+	- otherwise you have *consistency* problems
+	- thus, replication often requires a global synchronization method of some kind
+
+## A simple classification of distributed systems
+- the boundaries between centralized, decentralized and distributed systems are not strict between the classifications
+	- easy to think of combinations of the different types
+### High performance distributed computing
+- in *cluster computing*, the underlying hardware consists of a collection of similar compute nodes interconnected by a high speed network alongside a more common local-area network for controlling the nodes
+	- *grid computing* makes this very different
+		- consists of decentralized systems that are often constructed as a federation of computer systems
+			- each system may fall under a different administrative domain
+				- may be very different when it comes to hardware, software, and deployed network technology
+	- cluster computing became popular when the price/performance ratio of personal computers and workstations improved
+		- it eventually became financially attractive to create a supercomputer by connecting a collection of relatively simple computers in a high-speed network
+			- generally used for parallel programming, where a single program is run in parallel on multiple machines
+![[Pasted image 20250402200604.png]]
+- a management node is generally responsible for collecting jobs from users to distribute among the nodes of the cluster
+- the role of the operating system in cluster computing has gradually minimized, moving towards lightweight kernels that ensure the least possible overhead
+	- the downside of this is clusters become increasingly specialized
+- while cluster computing relies on the homogeneity of the nodes within it, grid computing does not make these kinds of assumptions
+	- a key issue is resources from different organizations are brought together to form a federation of systems
+		- a *virtual organization*
+		- processes belonging to the same virtual organization have access to the resources that are provided to that organization
+			- compute servers, storage facilities, databases, etc.
+	- much software for grid computing revolves around providing access to resources from different administrative domains, and to only those users and applications within that domain
+![[Pasted image 20250402201605.png]]
+- the architecture of grid computing consists of four layers:
+	- the *fabric layer* provides interfaces to local resources at a sppecific site
+		- they are tailored to allow sharing of resources within a virtual organization
+	- the *connectivity layer* consists of communication protocols for supporting grid transactions that span the usage of multiple resources
+		- needed to transfer data between resources or to access a resource from a remote location
+		- it will also contain security protocols to authenticate users and resources
+			- in general, human users are not authenticated, but programs acting on their behalf are
+	- the *resource layer* is responsible for managing a single resource
+		- uses the connectivity layer functions and directly calls the fabric layer interfaces
+		- the resource layer is seen to be responsible for access control, and relies on the authentication methods performed by the connectivity layer
+	- the *application layer* consists of the applications that operate within a virtual organization and which make use of the grid computing environment
+	- all of these can be seen as comprising the grid middleware layer and jointly provide access to and management of resources that are dispersed across multiple sites
+
+### Distributed information systems
+- another important class of distributed systems is one where an organization has a wealth of networked applications, but interoperability is painful
+	- there are several levels at which integration can take place
+		- a networked application is often just a  server running an application, making it available to remote programs (called *clients*)
+			- clients send a request to the server to execute a specific operation, to which a response is sent back
+				- integration allows clients to wrap requests for multiple different servers together into a larger request
+					- this can be executed as a *distributed transaction*
+					- over time, it became apparent that applications should just be allowed to communicate with each other
+						- *enterprise application integration*
+
+#### Distributed transaction processing
+- in practice, operations on a database are carried out in the form of *transactions*
+	- this requires special primitives that must be supplied by the underlying distributed system or the language runtime system
+		- in particular, *remote procedural calls* to remote servers, are often encapsulated in a transaction
+			- *transactional RPC*
+![[Pasted image 20250402202856.png]]
+- transactions adhere to the so-called *ACID* properties:
+	- **Atomic** - to the outside world, the transaction happens indivisibly
+	- **Consistent** - the transaction does not violate system invariants
+	- **Isolated** - concurrent transactions do not interfere with each other
+	- **Durable** - once a transaction commits, the changes are permanent
+- within distributed systems, transactions are often constructed as a number of subtransactions
+	- all subtransactions together form a *nested transaction*
+![[Pasted image 20250402203105.png]]
+- subtransactions can lead to a subtle, but important problem
+	- Imagine one transaction within a subtransaction commits and makes its results visible to the parent transaction
+		- if the parent aborts after further actions and returns the system to the orginal state, the subtransaction must be reversed
+			- the durability in ACID only applies to the top-level transactions in a system
+- Nested transactions are important in distributed systems for they provide a natural way of dividing transactions across multiple machines
+	- they follow a logical division of the work of the original transaction
+		- if you have a transaction in 3 parts, it's trivial to split that work up amongst 3 different systems
+			- the component that divides this is called a *transaction-processing monitor (TP monitor)*
+				- it essential coordinates the commitment of subtransactions following a standard protocol known as a *distributed commit*
+![[Pasted image 20250402203658.png]]
+#### Enterprise application integration
+- the more applications become decoupled from the databases they were built upon, the more evident it became that facilities were needed to integrate applications independently of their databases
+	- application components should be able to communicate directly with each other and not merely by the means of the request/reply behavior that was supported by transaction processing systems
+![[Pasted image 20250402204054.png]]
+- Several types of communication middleware exist
+	- with RPCs, an application component can send a request to another application component by doing a local procedure call
+		- this results in the request being packaged as a message and sent to the callee
+			- the result will be sent back as a result of the procedure call
+	- as time went on, techniques were developed to allow calls to remote objects
+		- *remote method invocations(RMIs)*
+			- the same as an RPC, except it operates on objects instead of functions
+	- RPCs and RMIs have the same disadvantage that the caller and callee must both be online during the time of communication
+		- they also need to know exactly how to refer to each other
+			- has led to the rise of *message-oriented middleware (MOM)*
+				- applications send messages to logical contact points, often described by a subject
+					- applications can indicate their interest for a specific type of message, after which the communication middleware will take care that those messages are delivered to those applications
+						- *publish/subscribe* systems
+### Pervasive systems
+- pervasive systems are intended to blend into our environment naturally
+	- components are necessarily spread across multiple systems
+		- thus, can be considered decentralized as opposed to distributed systems
+			- do have components that are sufficiently spread throughout the system, to handle failures, etc.
+	- are unique in that the separation between users and system components is much more blurred
+		- often no dedicated interface
+		- pervasive systems are typically equipped with many sensors that pick up various aspects of user behavior
+			- may have a variety of *actuators* to provide info and feedback
+			- devices in pervasive systems are often characterized as being small, battery-powered, mobile, and having only a wireless connection
+				- *Internet of Things*
+#### Ubiquitous computing systems
+- in an ubiquitous computing system, the system is pervasive and continuously present
+	- a user will be continuously interacting with the system
+- core requirements of a ubiquitous computing system:
+	- *Distribution* - devices are networked, distributed, and accessible transparently
+	- *Interaction* - interaction between users and devices is highly unobtrusive
+		- much interaction will be *implicit*
+			- not primarily aimed to interact with a computerized system, but which a system understands as input
+	- *Context awareness* - the system is aware of a user's context to optimize interaction
+		- identified by the where, who, when, and what of actions within the system
+		- important the data collected is lifted to a level of abstraction that can be used by applications
+		- *shared data spaces* - where processes are decoupled in time and space
+	- *Autonomy* - devices operate autonomously without human intervention
+		- highly self-managed
+		- no room for sysadmin to keep the whole system running
+		- the system must have the ability to react to changes:
+			- *Address allocation* - networked devices should have IP addresses dynamically allocated via DHCP
+			- *Adding devices* - it should be easy to add devices to the system, such as via *Universal Plug and Play protocol (UPnP)*
+			- *Automatic Updates* - devices should be able to regularly check in and download updates
+	- *Intelligence* - the system as a whole can handle a wide range of dynamic actions and interactions
+
+#### Mobile computing systems
+- mobility often forms an important feature of pervasive systems
+	- many aspects of them also apply to *mobile computing*
+- the devices to comprise a mobile computing system may vary wildly
+- the location of devices within the system geographically is expected to change over time
+	- this may have a profound effect on communication
+		- *mobile ad hoc networks (MANETs)*
+			- a group of local mobile computers would jointly set up a local wireless network to share resources and services
+				- never really caught on
+- the need for so many devices to utilize remote services has led to the development of *Mobile Edge Computing (MEC)*, in contrast to *Mobile Cloud Computing (MCC)*
+![[Pasted image 20250402205907.png]]
+
+#### Sensor Networks
+- these networks in many cases form part of the enabling technology for pervasiveness
+	- many solutions for sensor networks return in pervasive applications
+- more than just a collection of input devices
+	- sensors are often able to collaborate to process the sensed data efficiently in an application-specific manner
+- when considering sensor networks produce data, one can also focus on the data-access model
+	- can directly send messages between the nodes, or move code between nodes to access data
+		- can also let the sensor network provide a view of a single database
+			- two extremes of this view:
+				- first, sensors do not cooperate but send their data to a centralized database
+				- alternatively, forward queries to relevant sensors and let each computer an answer
+					- generally preferable to find a happy medium (perhaps utilizing a tree)
+![[Pasted image 20250402210728.png]]
+
+## Pitfalls
+- developing a distributed system is a formidable task
+- false assumptions many make when developing a distributed application for the first time:
+	- the network is reliable
+	- the network is secure
+	- the network is homogeneous
+	- the topology does not change
+	- latency is zero
+	- bandwidth is infinite
+	- transport cost is zero
+	- there is one administrator
+
+## Summary
+- a distributed system is a collection of networked computer systems in which processes and resources are spread across different computers
+	- distinction between sufficiently (distributed systems) and necessarily (decentralized systems) spread
+- spreading processes and resources cannot be considered to be a goal in and of itself
+- most choices for coming to a distributed system come from the need to improve the performance of a system in terms of reliability, scalability, and/or efficiency
+- design goals typically include sharing resources and openness, but designing secure distributed systems is increasingly important
+- designers also aim to hiding many of the intricacies related to distributing processes
+	- comes at a performance price, and may also not be able to be fully achieved
+		- tradeoffs are an inherent part of distributed system design
