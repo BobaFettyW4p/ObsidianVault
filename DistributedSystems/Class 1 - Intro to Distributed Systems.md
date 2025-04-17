@@ -164,3 +164,100 @@
 		- modifying one copy makes it different from the rest
 		- keeping copies consistent requires global synchronization
 		- global synchronization precludes large-scale solutions
+
+# Types of distributed systems
+- high performance distributed computed (HPR)
+	- cluster
+		- a group of high-end systems connected through a LAN
+			- homogenous: same OS, near identical hardward
+			- single managing node
+	- Supercomputers
+		- special class of computer
+			- "a cluster with sauce"
+			- may be clusters on massive scale (10k+ nodes)
+			- networking between computer is extremely fast
+		- measure by FLOP (floating point operations per second)
+	- Grid computing
+		- lots of nodes from everywhere
+			- heterogeneous:
+				- why is this advantageous?
+			- dispersed across several organizations
+			- span a wide-area network
+		- grids generally use virtual organizations. This is a grouping of users that will allow for authorization or resource allocation
+	- Cloud computing
+		- the next step is to simply outsource the entire infrastructure that is needed for applications
+- Distributed Information systems
+	- one of the main examples of distributed systems is in the management of info:
+		- distributed databases with distributed transactions
+		- enterprise application communication
+	- distributed systems need to be able to exchange info between nodes
+### Databases
+- Transactions
+	- all or nothing semantics (everything succeeds, or transaction fails)
+- ACID Properties
+	- Atomic: to outside world, the transaction happens indivisibly
+	- Consistent: The transaction does not violate system invariants (rules)
+	- Isolated: Concurrent transactions do not interfere with each other
+	- Durable: Once a transaction commits, the changes are permanent
+### Enterprise application communication
+- methods for allowing application components to communicate directly with one another
+- Message Passing Interface (MPI) enables different messaging models in a network environment
+- Remote Procedure Call (RPF)
+	- one component can send a request to another by performnign a local procedure call
+
+### Distributed systems for pervasive computing
+- mobile computing, sensor networks
+- pervasive systems naturally blend into the environment
+	- as a result of mobile and embedded systems
+- nodes are no longer permanent, they fail, move, leave
+- different challenges than the more permanent systems discussed previously
+	- separation between user/system is blurred
+	- lack of single dedicated interface
+	- often has many sensors to pick up aspects of user behavior
+	- actuators to provide information/feedback
+- ubiquitous computing, mobile computing, sensor networks
+
+#### EX. Ubiquitous computing
+- system is pervasive and continuously present
+	- users interact with the system without even being aware of the interaction
+- Requirements:
+	- Distribution: devices are networked, distributed, and accessible in a transparent manner
+	- Interaction: interaction between users and devices is highly unobtrusive
+	- Context awareness: the system is aware of a user's context in order to optimize interaction
+	- Autonomy: devices operate autonomously without human intervention, and thus highly self-managed
+	- Intelligence: the system as a whole can handle a wide range of dynamic actions and interactions
+#### Ex. Mobile computing
+- phone, tablet, watch, car, GPS devices
+- the battery is the most annoying part
+- the location of a device is assumed to change over time
+		- what does this mean?
+		- how do we work out how to communicate with a device?
+		- how do we discover services? how do we announce our presence to others? how do we locate other devices?
+
+### Wireless mobile ad hoc network (MANET)
+- form an ad hoc network amongst nodes
+- how to route messages?
+	- pass messages along a path of nodes, inevitably will break as intermediate nodes will move out of neighbor's range
+- rely on two ideas
+	- flooding messages that propagate throughout the network (significant overhead)
+### Sensor networks
+- thousands of small nodes with sensing devices
+- often wireless communication and battery powered
+- challenges include limited resources, communication, constrained power
+- scope-based communication
+	- e.g. neighbors, systemwide, individual node
+
+### Internet of Things
+- the internet of things is a network of devices such as behicles, and home appliances that contain electronics, software, sensors, actuators and connectivity which allows them to connect, interact and exchange data
+
+### Edge computing
+- bring computing closer to where it is needed
+- often used to mean computation is primarily conducted on distributed devices
+	- some consider anything not in a data center to be the edge
+- common in IoT and sensor entworks
+- increasingly relied upon in distributed computing as data sizes increase, more
+### Summary
+- there are many classes of distributed systems:
+	- designed for computation, HPC clusters
+	- designed for information sharing, distributed databases
+	- designed for pervasiveness, mobile computing and sensor networks
