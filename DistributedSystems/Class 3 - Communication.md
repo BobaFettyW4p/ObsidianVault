@@ -315,6 +315,6 @@
 - General model:
 	- update operations are performed at a single server
 	- a replica passes updated state to only a few neighbors
-	- update propagation is lazy (i.e. not immedaite)
+	- update propagation is lazy (i.e. not immediate)
 	- eventually, each update will reach every replica
 
