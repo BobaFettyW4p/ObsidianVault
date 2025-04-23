@@ -26,8 +26,8 @@
 ![[Pasted image 20250410181311.png]]
 - headers are consumed in the opposite order that they are constructed
 ### Network layer: Internet Protocol (IP)
-- aim to deliver (route) packets from source to destination based on the ip address in the header
-- encapsulates data into datagrams
+- aim to deliver (route) packets from source to destination based on the **ip address** in the header
+- encapsulates data into *datagrams*
 	- supports fragmentation and reassembly
 - Responsible for routing packets through a network
 - best-effort delivery (unreliable)
@@ -45,7 +45,7 @@
 	- not interoperable with IPv4, but both coexist together
 	- addresses are represented as eight groups of four hex digits (128 bits)
 	- new packet format
-		- to minimze header processing
+		- to minimize header processing
 	- many other advantages
 		- IPSec
 		- multicasting
@@ -72,17 +72,17 @@
 	- Multicast uses it to broadcast info (service discovery)
 ### Classification of message: receiver
 - from the receiver's perspective, what happens to the message?
-- Persistent
+- **Persistent*
 	- message is stored by communication middleware until receiver is ready to receive it
 		- i.e. email
-- Transient:
+- **Transient**:
 	- message must immediately be received by the sender once it reaches the communication middleware, or else it is discarded
 
 ### Classification of messages: sender
 - the sender can have the following behaviors in the presence of either persistent or transient messages:
-- Asynchronous
+- **Asynchronous**
 	- the sender sends the message and immediately unblocks to send another message
-- Synchronous
+- **Synchronous**
 	- the sender sends the message and blocks until:
 		- message received by middleware
 		- message received by receiver
@@ -114,7 +114,7 @@
 ### How do we deal with pointers?
 - forbid them? (since machines don't share memory, pointers don't make a lot of sense)
 	- often not feasible
-- often references to fixed size data types or dynamic data types where size can be computed at runtim
+- often references to fixed size data types or dynamic data types where size can be computed at runtime
 	- we can copy the referenced data structure to a "flat" param
 - more complicated types (e.g. user-defined classes) are more difficult
 	- ideally the language system can handle marshaling/unmarshaling of data
@@ -140,7 +140,7 @@
 
 ## Communication techniques: message passing
 ### RPC is great, but it blocks
-- RPC is inherently synchronous and transient by default
+- RPC is inherently *synchronous* and *transient* by default
 	- other techniques allow asynchronous and persistent behavior
 ### Sockets
 - transport layer provides a good base for messaging
@@ -152,8 +152,8 @@
 - abstracts low-level socket implementations
 	- same interface irrespective of the underlying OS
 - provides a higher-level model by pairing sockets:
-	- one for sending messages at process P
-	- a corresponding one at process Q for receiving messages
+	- one for sending messages at process `P`
+	- a corresponding one at process `Q` for receiving messages
 - TCP-based, all communication is connection-oriented
 - Allows many-to-one communication with sockets
 	- server can listen to multiple ports
@@ -162,8 +162,8 @@
 #### Ex. ZeroMQ request/reply
 - request-reply pattern
 	- traditional client-server communication
-	- a client application uses a request socket(of type REQ) to send a request
-	- the server uses a reply socket (of type REP) to reply
+	- a client application uses a **request socket**(of type REQ) to send a request
+	- the server uses a **reply socket** (of type REP) to reply
 - advantages:
 	- simplifies development by avoiding need to call listen or accept
 	- when a server receives a message, a subsequent call to send is automatically targeted toward the original sender
@@ -270,17 +270,17 @@
 - receiver can indicate to the sender whether its message was accepted or rejected
 	- notification was sent to original sender
 - Persistence
-	- mark a message as durable: indicate that intermediate nodes (e.g. queue) can recover in case of fialure (nodes that can't will reject the message)
+	- mark a message as durable: indicate that intermediate nodes (e.g. queue) can recover in case of failure (nodes that can't will reject the message)
 
 # Multicast
 - many applications require sending data to multiple receivers
 	- content distribution, P2P, location services, distributed analyses
 - Unicast
-	- directed data transfer from point to point
+	- directed data transfer from **point to point**
 - Broadcast
-	- data transferred from point to all other points
+	- data transferred from point to **all** other points
 - Multicast
-	- data sent from point to a set of other points
+	- data sent from point to a **set** of other points
 ### Application level multicast
 - basic idea is to organize nodes of a distributed system into an overlay network and use that network to disseminate data:
 	- a tree, leading to unique paths between every pair of nodes
