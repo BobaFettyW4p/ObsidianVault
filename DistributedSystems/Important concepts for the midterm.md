@@ -136,7 +136,7 @@
 	- objects are referenced using a URI
 	- simple operation to create, update, delete, and retreive objects
 
-vent-based systems
+event-based systems
 - as systems scale (more nodes join and leave) it's important to decouple dependencies between processes
 	- separation between coordination and processing
 ![[Pasted image 20250422202748.png]]
@@ -253,7 +253,7 @@ Disadvantage: each thread operation has to be carried out by the kernel
 - some common services have well-known ports
 	- FTP == TCP 21
 	- HTTP == TCP 80
-	- GTTPS == TCP 443
+	- HTTPS == TCP 443
 - can have a method for the client to discover the port
 
 ### Discovering a server
