@@ -322,3 +322,542 @@
 			- once the originators of the messages receive the message back, they can conclude that every node in the ring was able to append their ID to the list in the message
 				- the message will then be sent around the ring again
 					- if a node receives the message and their ID is the highest, they will win the election and assume coordinator duties
+## Dependable systems
+- **availability**
+	- system is ready to be used immediately
+		- the probability that a system is operating correctly at any given moment
+		- expressed in terms of 9s
+- **reliability**
+	- how long can you run continuously without failure? defined in terms of a time interval
+		- 1 hour, 1 day, 1 week
+- **safety**
+	- ensure no catastrophic event happens if the system temporarily fails
+		- important for planes and power plants
+- **maintainability**
+	- ease by which a failed system can be repaired
+		- mean time to resolution
+
+## Anatomy of failure
+- a system *fails* when it cannot meet its promises
+- an *error* is the part of a system's state that may lead to failure
+- the cause of an error is a *fault*
+	- transient faults occur once and disappear
+	- intermittent faults occur, then vanish, then reappear
+	- permanent fault continues to exist until the faulty component is replaced
+		- software bug, hardware fault
+- *fault tolerance* means that a system can provide services in the presence of faults
+
+### Failures in more detail
+- Crash failure: halts, but is working correctly until it halts
+- Omission failure: fails to respond to incoming requests
+	- Receive omission: fails to respond to incoming messages
+	- Send omission: fails to send messages
+- Timing failure: response lies outside a specified time interval
+- Response failure: response is incorrect
+	- Value failure: the value of the response is wrong
+	- State-transition failure: Deviates from the correct flow of control (request structure)
+- Byzantine/arbitrary failure: may produce arbitrary responses at arbitrary times
+	- accidental or malicious
+
+### Faults in synchronous and asynchronous systems
+- *synchronous system*: process execution speeds and message delivery times are bounded
+	- when a server shows no more activity when it is expected to do so, a client can conclude that it has crashed
+- *asynchronous system*: no assumptions about process execution speeds or message delivery times are made
+	- when a client no longer sees any actions from a server it cannot conclude that the server has crashed
+		- it may be slow or its messages may have been lost
+
+### Partially synchronous systems
+- pure synchronous systems exist only in theory
+- stating that every distributed system is asynchronous is not what we see in practice
+	- overly pessimistic
+- realistic to assume a system is *partially synchronous*; most of the time it behaves as a synchronous system, but there is no bound on the time that it behaves in an asynchronous fashion
+	- asynchronous behavior is an exception
+		- we can normally use timeouts to conclude that a process has indeed crashed
+			- occasionally this conclusion is false
+- in practice, we have to design fault-tolerant systems that can withstand incorrectly detecting that a process halted
+### Failures in partially synchronous systems
+- **fail-stop failure**: when a system detects its own failure and shuts down immediately
+	- crash failures that can be reliably detected
+	- may occur when assuming non-faulty communication links and when the failure-detecting process `P` can place a  worst-case delay on responses from `Q`
+- **fail-noisy failures**: almost like a fail stop, but are not detected immediately
+	- `P` will eventually come to the correct conclusion that `Q` has crashed
+		- there may be some unknown time in which `P`'s detection of the behavior of `Q` are unreliable
+- **fail-silent failures**: we assume that communication links are non-faulty, but that process cannot distinguish crash failures from omission failures
+- **fail-safe failure**: cover the case of dealing with arbitrary failures, yet they are benign; they do no harm
+- **fail-arbitrary failures**: may fail in any possible way; failures may be un-observable in addition to being harmful
+
+### Masking failures
+- the best we can do is try and hide failures from other processes
+- Information redundancy
+	- add extra bits to recover from garbled bits
+- time redundancy
+	- action performed, and if needed it is performed again
+- physical redundancy
+	- extra equipment or processes added to tolerate loss of component
+	- could be done at the hardware or software level
+
+### Resilience
+- what we would like to do is:
+	- detect failures
+	- mask failures
+	- recover from failures
+- *resilience* is the ability to provide an acceptable level of service in the presence of failures
+
+### Resilience by process groups
+- key approach is to organize several identical processes into a group
+	- when a message is sent to a group, all members receive it
+	- if one fails, another can take over
+- groups may be dynamic, processes can join/leave, processes may be members of different groups at the same time
+- we need mechanisms to organize and manage process groups
+#### group organization
+- flat group
+	- all processes are equal and decisions are made collectively
+	- symmetrical/no single point of failure
+	- decision-making is complicated and decisions can take time
+- hierarchical group
+	- one process is the coordinator and all others are workers
+	- loss of coordinator means we need to find a replacement
+	- decisions can be made quickly
+![[Pasted image 20250504100611.png]]
+##### how does this help us
+- groups allow us to mask faulty processes in the group
+	- we replicate processes and organize into a group
+- need to consider how much replication is needed
+	- a system is said to be *k-fault tolerant* if it can survive faults in `k` components
+	- with silent failures, then having `k+1` processes is sufficient
+	- with byzantine failures we need at least `2k+1` non-faulty processes
+		- if k sends the wrong answer, then you need `k+1` to send the correct answer
+			- "believe the majority"
+
+## Consensus
+- process by which nodes in a distributed system reach agreement on something
+
+### Background: important system properties
+- safety
+	- something bad will never happen
+	- consensus: no nodes will decide on different values
+- liveness
+	- something good will happen (eventually)
+		- no specification on the time bound
+		- system will make progress despite concurrent execution
+	- consensus: all nodes will eventually decide on a value
+
+### How do we achieve consensus?
+- agreement of many nodes on shared state, i.e. a data value
+- general model
+	- *proposes* a value by suggesting to others
+	- *decides* based on what it thinks everyone agrees on
+### Fischer-Lynch-Patterson (FLP Result)
+- one of the most important results in distributed systems
+- consensus was known to be solvable in synchronous systems
+- FLP: consensus cannot be guaranteed in an asynchronous distributed system within bounded time if a node *might* fail
+	- we cannot reliably detect failure between a crashed node and a slow node
+- no asynchronous consensus algorithm can guarantee both safety and liveness
+
+### 2 phase commit
+- **phase 1**: commit-request (or voting)
+	- coordinator suggests value to all nodes and gathers responses (yes/no)
+	- participants execute transaction up to commit
+- **phase 2: commit**
+	- if everyone agrees, coordinator tells nodes the value is final, they commit, then ACK
+	- if anyone disagrees, tell all nodes to rollback, then ACK
+- does this solve the consensus problem?
+	- what happens if a node crashes?
+		- participant? coordinator?
+![[Pasted image 20250504101133.png]]
+
+### 3 phase commit
+- **phase 1**: voting
+	- identical to 2 phase system
+- **phase 2**: prepare commit
+	- if all reply yes then coordinator sends "prepare commit"
+	- each node executes up to commit and ACKs receipt of messages
+- **phase 3**: commit
+	- if coordinator receives ACK from all nodes it tells all nodes to commit
+	- if any node says no it aborts
+- this solves the issues with the two phase commits and its inability to recover from failure, but there are other issues
+![[Pasted image 20250504101220.png]]
+
+# Paxos
+
+## Basic protocol
+- **1a: Prepare**
+	- a *proposer* selects a proposal number `n` and sends a *prepare* request with number `n` to a majority of *acceptors*
+		- `n` is greater than any number used by a proposer
+- **1b: Promise**
+	- if an *acceptor* receives a *prepare* request with number `n` greater than that of any *prepare* request to which it has already responded, then it responds to the request with a *promise* not to accept any more proposals numbered less than `n` and with the highest-numbered proposal that it has accepted
+	- otherwise, the *acceptor* can ignore the proposal
+- **2a: Accept**
+	- if the *proposer* receives a promise response to its *prepare* requests from a majority of acceptors, then it sends an *accept* request to those *acceptors* with a value `v`, where `v` is the value of the highest-numbered proposal among the responses
+		- `v` is any value if the responses reported no proposals
+- **2b: Accepted**
+	- If an *acceptor* receives an *accept* request for proposal `n`, it accepts the proposal unless it has already responded to a *prepare* request having a number greater than `n`
+		- otherwise it ignores it
+	- an *acceptor* will send an accept message to the *proposer* and every *learner*
+
+### Paxos example
+
+![[Pasted image 20250504102446.png]]
+- here is a series of nodes united under Paxos
+![[Pasted image 20250504102613.png]]
+- Node 3 wants to write a value `v=1` to the ledger in place `p=15`...
+![[Pasted image 20250504102728.png]]
+- so it sends a prepare request to the other nodes.
+	- nodes 1 and 2 now check their ledgers to ensure they do not have a value of `n` greater than 15 in their ledgers
+![[Pasted image 20250504103014.png]]
+- if this is so, they will promise not to accept another proposal
+	- these nodes will then send a promise response to the sending node if they have not
+	- if they have, they will reply with that value, and 3 would to send a new prepare request with a higher value of `n`
+![[Pasted image 20250504103115.png]]
+- once the proposer receives an promise message from a majority of acceptors, it is clear to add the value to ledger at the proposed value
+	- will send an accept message to all acceptors
+![[Pasted image 20250504103340.png]]
+- when the acceptors receive the accept message, they will append the value `v` to their ledger at location `n`
+
+### Paxos example with failed node
+
+![[Pasted image 20250504103904.png]]
+- we are using the same system as before, with the same proposed values for `n` and `v`
+![[Pasted image 20250504103935.png]]
+- node 3 sends the prepare request as in the above example
+![[Pasted image 20250504104125.png]]
+- and the acceptors send their promise requests like you would expect
+![[Pasted image 20250504104339.png]]
+- but then the proposer node fails
+- 
+![[Pasted image 20250504104405.png]]
+- since the acceptors have already sent a promise message, they will not accept an alternate value for any position `n` in the ledger smaller than the value they have already promised
+![[Pasted image 20250504104730.png]]
+- if a greater value is sent, there is a Paxos safety mechanism in place that will update incomplete prior commits before processing a new one
+![[Pasted image 20250504104739.png]]
+- the value of the prior incomplete commit will be appended to the new place in the ledger, ensuring the value is written
+- it would then be possible to add `v=5` to the ledger at position `n=18` or greater
+### failure modes
+- failure of an acceptor (with quorum alive)
+	- no recovery needed (no additional messages required)
+- failure of a learner
+	- no recovery needed (no additional messages required)
+- failure of proposer without conflict
+	- what we just saw
+- failure of proposer with conflict
+	- e.g. when the leader recovers
+	- can lead to many unsuccessful rounds
+		- will lead to stalling of the procol
+
+- Paxos guarantees safety not liveness
+
+### Paxos Summary
+- guarantees safety (consistency)
+	- can withstand `f` failures with `2f+1` acceptors
+- liveness?
+	- No, but conditions for preventing progress are rare
+- difficult to implement
+- many variants and optimizations
+- any node can commit a value in 2RTT
+	- in multi Paxos, the leader can do it in 1RTT
+- Paxos + replicated state machine == fault tolerant services
+
+# Raft
+## An understandable consensus algorithm
+- an effort to make decision decisions based on understandability
+	- strong leader model
+- problem decomposition
+- minimize state space
+	- multiple problems with single mechanism
+	- no special cases
+	- minimize nondeterminism
+
+### Problem decomposition: 3 core problems
+- leader election
+	- elect one server to act as leader
+		- all message passing initialized by leader
+			- detect crashes, choose new leader
+- log replication
+	- leader accepts commands from clients, appends to its log
+		- clients must communicate with leader
+	- leader replicates its log to other servers
+		- overwrite inconsistencies
+- safety
+	- keep logs consistent
+	- only servers with up to date logs can become leader
+### Terms
+- logical clock model
+	- each node has its own local view of time
+		- "current term"
+	- current term increases monotonically over time
+- Every Raft communication includes and compares current term
+	- 1 leader per term
+	- some terms have no leader (failed election)
+- terms are updated when a node starts an election or when the current term communicated from another server is higher than its own
+- communication with a node with a higher term is rejected
+	- if a candidate learns of a higher term it returns to being a follower
+![[Pasted image 20250504105221.png]]
+
+![[Pasted image 20250504105248.png]]
+
+### Leader election
+- a leader is responsible for sending heartbeats to every other node
+	- if a node does not get a heartbeat from the leader within the timeout period, it initializes an election
+- follower increments current term and transitions to candidate state
+- votes for itself
+- issues *RequestVote* to each other node
+- waits until:
+	- the node wins the election
+	- another server establishes itself as the leader
+	- a period of time passes without a winner
+		- election will be restartd in this case
+- other nodes will vote for at most one winner
+
+### Log replication
+- leader accepts commands from clients
+	- commands to other nodes are directed to the leader
+- appends commands to its own log
+- issues *AppendEntries* RPC to each other node
+- when command is applied to all other nodes, leader then commits it to their state machine
+	- includes all prior entries
+- if followers crash or run slowly, the leader retries indefinitely until all followers store all log entries
+
+### Leader failure
+- the leader handles inconsistencies by forcing the followers logs to duplicate its own
+	- strong leader model
+- find the latest log where the two logs agree, delete entries in the follower's log after that, and send follower the leader's entries
+- safety guaranteed by several restrictions:
+	- election restriction: voting process to prevent candidate from winning unless its log contains all committed entries
+	- committing from previous term: if leader crashes before commit, future leaders will attempt to complete the commit
+## Raft leader election
+
+![[Pasted image 20250504105555.png]]
+- assume a Raft system with no leader
+- each node in the system is waiting for a heartbeat from the leader for a random period of time
+![[Pasted image 20250504105640.png]]
+- eventually, one of these nodes' waiting period will elapse, and they will start an election to elect a new leader
+	- in our case, node 2
+- they vote for themselves, and send a RequestVote message to each other node
+![[Pasted image 20250504105921.png]]
+- once all the votes are collected, a candidate that receives a majority of votes becomes the leader
+![[Pasted image 20250504110004.png]]
+- this denotes the start of a new term
+- the leader will then capture logs from all nodes in the grouping, and will enforce this log to be replicated across all nodes
+## Raft setting a value
+- here we have a Raft system with node 2 serving as the leader
+![[Pasted image 20250504110136.png]]
+- when the leader appends a value to its log, it must enforce this on all nodes in the consensus group
+- it will send a message to all the nodes requesting to set the log to a specific value
+![[Pasted image 20250504110328.png]]
+- and they will update their logs accordingly, and respond back to the leader that they are prepared to update their logs
+![[Pasted image 20250504110420.png]]
+- the leader will then set the local log to the agreed upon value and reach out to all other nodes to update the value
+
+## Dealing with failure in Raft
+- imagine a Raft system where node 2 is the leader, but it fails
+![[Pasted image 20250504110510.png]]
+- eventually, one of the nodes (in this case node 1) will determine the leader is no longer responding to messages and initiate an election
+![[Pasted image 20250504110541.png]]
+- eventually, the node will win the election in the process previously specified
+![[Pasted image 20250504110609.png]]
+- and resume normal operation
+![[Pasted image 20250504110621.png]]
+
+### Challenges with Raft
+- split vote
+	- if the vote is split, no node becomes leader
+	- if this happens, wait for the next timeout and election
+		- most implementations issue random heartbeat timeouts for exactly this reason
+- network partitions
+	- not a real concern as we need a quorum to update state
+
+#### Raft Summary
+- understandable distributed consensus algorithm
+	- few states, simple transition conditions, simple rules
+- addresses the replicated state machine problem
+- strong leader model
+	- several pros and cons
+- safety
+	- leader election/log commitment rules guarantee safety
+- liveness
+	- competing candidates could cause a repeated split vote
+		- random timeouts mitigate this, but it's rare in practice
+- not designed to address Byzantine failures
+
+## Basic idea
+- to keep replicas consistent, we need to ensure that all *conflicting operations* are done in the *same order everywhere*
+- Conflicting operations:
+	- read-write conflict: a read operation and a write operation act concurrently
+	- write-write conflict: two concurrent write operations
+- guaranteeing global ordering on conflicting operations may be a costly operation (and reduce scalability)
+	- solution: weaken consistency requirements so that hopefully global synchronization can be avoided
+
+### Consistency model
+- a *consistency model* is a contract between processes and the data store
+	- it says that if processes (or the data store) agree to obey certain rules, the store promises to work correctly
+- normally, a process that performs a read operation on a data item expects the operation to return a value that shows the results of the last write operation on that data
+- without a global clock, it's hard to know which operation was the last.... we use more relaxed consistency models restricting what can be returned
+#### Sequentially consistent?
+![[Pasted image 20250510081326.png]]
+- Since `W(x)a` on `P1` and `W(x)b` on `P2` have no direct correlation, we cannot determine definitively which starts and completes first (without additional information)
+- Since `P3` and `P4` both read the value of `x` to be `b` and then later read it to be `a`, this is considered to be sequentially consistent
+![[Pasted image 20250510081924.png]]
+- conversely this system is not sequentially consistent
+	- `P3` sees `W(x)b` completing before `W(x)a`
+	- `P4` sees `W(x)a` completing before `W(x)b`
+	- thus, the writes were considered to have completed in different orders on different processes and are not sequentially consistent
+
+
+### Causal consistency
+- remember we often don't care about sequential ordering, what we care about is ordering of events that are *causally related*
+	- if event `a` is caused by event `b`, causality means everyone should see `b` first and then see `a`
+- for a data store to be considered causally consistent, it is necessary the store obeys the following conditions:
+	- *writes that are potentially causally related must be seen by all processes in the same order*
+	- *concurrent writes may be seen in a different order on different machines*
+
+![[Pasted image 20250510082713.png]]
+- In this system, `P1` creates a causal relationship between `W(x)a` and `W(x)c`
+	- namely, that `W(x)a` occurs before `W(x)c`
+- similarly, `P2` establishes a relationship between `W(x)a` and `W(x)b`
+	- that `W(x)a` occurs before `W(x)c`
+- a system is causally consistent is all causal relationships are respected
+	- on `P3`, both of these relationships are respected
+		- `R(x)a` comes before `R(x)c`
+		- `R(x)a` comes before `R(x)b`
+	- same for `P4`
+	- in this case, the system is not sequentially consistent because the same sequential order is not represented across all processes
+		- i.e. on `P3` `R(x)c` comes before `R(x)b`, but on `P4`, `R(x)b` comes before `R(x)c`
+![[Pasted image 20250510084309.png]]
+- this system is not causally consistent
+	- `P2` establishes a causal relationship between `a` and `b`
+		- namely, `a`->`b`
+			- this relationship is not seen on `P3`, thus making the system not causally consistent
+
+### Eventual consistency
+- concurrency is not always common
+	- e.g. a database typically has many more reads than writes
+	- e.g. on the web, pages are typically updated by one person and users typically tolerate cached data (proxies/browsers)
+- **in the absence of write-write conflicts**, the state will eventually converge across replicas
+- great for building performant systems
+
+	- **sequential consistency** - all processes see the same order of all operations
+	- **causal consistency** - writes that are potentially causally related must be seen by all processes in the same order. concurrent writes may be seen in a different order on different machines
+	- **eventual consistency** - in the absence of write-write conflicts, all replicas will eventually converge toward identical copies of each other
+
+## From data to client-centric consistency
+- data-centric consistency aims to provide system-wide consistency across a data store
+	- this is hard and we may be able to relax consistency requirements
+- we consider a type of data store where we don't have many concurrent updates
+	- when updates do happen, they can be easily resolved as they don't affect one another
+		- mostly read-centric workloads
+- we can apply various weak consistency models (e.g. eventual consistency) from the perspective of the client
+![[Pasted image 20250510085246.png]]
+
+### Goal
+- eventual consistency guarantee is
+	- "given no updates, all clients will see exactly the same state of a system in sometime"
+- if we stop doing writes, the system will (eventually) converge to some consistent state
+	- this is a very weak constraint that is probably simpler to implement and could be very performant
+		- not always possible
+#### Monotonic reads
+>if a process reads the value of a data item x, any successive read operation on x by that process will always return that same or a more recent value
+- the read operations performed by a single process `P` at two different local copies of the same data store
+![[Pasted image 20250510090729.png]]
+- why example b is not a monotonic-read:
+	- After P$_1$ has read x$_1$, it later reads x$_2$
+	- the previous write W$_2$(x$_1$|x$_2$) produces an x$_2$ that is independent from x$_1$
+		- thus, P$_1$'s read at L$_2$ is known not to include the effect of its own write when it reads at R$_1$ 
+#### Monotonic writes
+> a write operation by a process on a data item x is completed before any successive write operation on x by the same process
+- if we have two successive operations W$_k$(x$_i$)` and `W$_k$(x$_j$) by process P$_k$, then regardless of where W$_k$(x$_j$) takes place, we also have W(x$_i$;x$_j$)
+![[Pasted image 20250510091854.png]]
+- example `b` is not monotonic because:
+- P$_2$ produces a concurrent version to x$_1$ after it produces x$_3$ but concurrently to x$_1$
+
+#### Read your writes
+> the effect of a write operation by a process on data item x will always be seen by a successive read operation on `x` by the same process
+![[Pasted image 20250510092321.png]]
+- in example `b`, P$_2$ produces a version concurrently to x$_1$
+	- the effects of the previous write operation by P$_1$ have not necessarily propagated to L$_2$ when x$_2$ was produced
+		- when P$_1$ reads x$_2$, it will not see the effects of its own write operation at L$_1$
+
+#### Writes follow reads
+> a write operation by a process on a data item x following a previous read operation on x by the same process is guaranteed to take place on the same or a more recent value of x that was read
+![[Pasted image 20250510092530.png]]
+- example `b` does not follow writes follow reads because:
+	- P$_3$ produces a version x$_2$ concurrently to that of x$_1$
+		- when P$_2$ updates x after reading x$_1$, it will be updating a version it has not read before
+			- x$_2$ squashed x$_1$
+### Replica management
+- important to think about where, when and by whom replicas should be placed
+- two related problems:
+	- *where* should we place replica servers?
+	- *how* should we place content on replicas?
+
+### Choosing replica locations
+- figure out the best `K` places out of `N` possible locations
+	- select best location out of `N` for which the average distance to clients is minimal
+		- then choose the next best location
+			- computationally expensive
+	- select the K$^{th}$ largest autonomous system (set of nodes **managed by the same organization**) and place a server at the best connected host
+		- computationally expensive
+	- position nodes in a `d`-dimensional geometric space, where distance reflects latency
+		- identify the `K` regions with highest density and place a server in each
+- not so much a concern these days as we have many cloud datacenters to easily place replicas
+
+### Server-initiated replicas
+- replicas are created when needed to improve performance
+	- typically created by the owner/data store
+- ex. web server replicas
+	- a server that receives a burst of requests far from the server might want to deploy replicas in regions close to the requests
+	- a heavily loaded server might add additional instances to reduce load
+- each server keeps track of access counts per file, aggregated by considering server closest to requesting clients
+	- number of accesses drops below deletion threshold D -> drop file
+	- number of accesses exceeds replica threshold R -> replicate file
+	- number of access between D and R the file may only be migrated
+![[Pasted image 20250510093503.png]]
+### Client initiated replicas
+- commonly known as *caching*
+	- local storage used for temporarily storing a copy of requested data
+	- improve access to data that is *likely to be used again*
+	- could be on the local machine or could be a nearby machine
+		- institution cache
+	- most often the server has no knowledge of the cache, and provides no influence on caching decisions
+- big question is how long to keep data in a cache (when to invalidate)
+	- either because data is stale or to make room for other data
+- many approaches: LRU, FIFO, size-based
+#### State vs operations
+- what should be propagated
+	- notification of update
+		- just that the data has changed
+		- common with cache invalidation models
+		- uses little bandwidth, good when many more updates than reads
+	- transfer data from one copy to another
+		- most common approach
+		- good when many more reads than writes
+		- must update before the next read happens
+	- send the update operation to other copies
+		- each replica managed by process that keeps data up to date
+		- minimal bandwidth, but more work on replica
+
+#### Push vs pull
+- **pushing updates**: server-initiated approach, in which update is propagated regardless whether target asked for it
+	- efficient when many more reads than writes, i.e. we expect the replica to be read
+- **pulling updates**: client-initiated approach, in which the client requests to be updated
+	- efficient when many more writes than reads
+![[Pasted image 20250510093945.png]]
+
+##### Hybrid approach: leases
+- dynamically switch between pulling and pushing using *leases*
+	- a contract in which the server promises to push updates to the client until the lease expires
+- make lease expiration time dependent on system's behavior
+	- adaptive leases
+	- **age-based leases**: an object that hasn't changed for a long time, will not change in the near future, so provide a long-lasting lease
+	- **renewal-frequency based leases**: the more often a client requests a specific object, the longer the expiration time for that client will be
+	- **state-based leases**: the more loaded a server is, the shorter expiration times become
+
+#### Remote write protocols
+![[Pasted image 20250510094127.png]]
+#### Local-write protocols
+![[Pasted image 20250510094142.png]]
+#### Replicated write protocols
+- write operations carried out by multiple replicas at the same time
+	- active replication: operation forwarded to all replicas
+	- consistency protocols: majority voting
+- read and write quorums
+![[Pasted image 20250510094202.png]]
