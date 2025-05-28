@@ -309,7 +309,7 @@ In general, pick 2 out of 3 of Consistency, Availability and Partition tolerance
 		- when file is closed, changed portions are copied to the file server
 	- clients register with server that they have a copy of a file, server then sends cache invalidation messages if file changes (tradeoff server state vs better consistency)
 
-### file System in User Space (FUSE)
+### File System in User Space (FUSE)
 - let user-space programs handle file system calls
 	- open()
 	- read()
