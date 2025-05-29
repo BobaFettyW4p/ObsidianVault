@@ -134,7 +134,7 @@
 		- objects - bundle of bytes representing something
 		- buckets - namespace for organizing objects
 	- objects are referenced using a URI
-	- simple operation to create, update, delete, and retreive objects
+	- simple operation to create, update, delete, and retrieve objects
 
 event-based systems
 - as systems scale (more nodes join and leave) it's important to decouple dependencies between processes
@@ -148,7 +148,7 @@ event-based systems
 	- temporal couple occurs as both processes are online at the same time
 - *mailbox*
 	- temporal decoupling - processes are not executing at the same time
-	- communication takes place by putting messages in a mailbox, others can retreive
+	- communication takes place by putting messages in a mailbox, others can retrieve
 ### Event-based and data spaces
 - *event-based*
 	- processes do not know each other explicitly, instead they **publish** a notification describing the occurrence of an event
