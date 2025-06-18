@@ -68,12 +68,13 @@ F | T |
 		- if both are true, or both are false, then $p \implies q$
 			- can only prove the implication false when only one of $p$ and $q$ is false
 - Truth table
+
 |p | q | p implies q|
 |--|---|------------|
-T |T | T |
-T |F | F |
-F |T | T |
-F |F | T |
+|T |T | T |
+|T |F | F |
+|F |T | T |
+|F |F | T |
 - if $p$ is false, the implication is what is referred to as *vacuously true*
 
 - if both $p \implies q$ and $q \implies p$ are both true, we say $p \text{ if and only if } q$
