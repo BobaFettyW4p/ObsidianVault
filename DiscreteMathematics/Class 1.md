@@ -40,7 +40,7 @@
 		- at least one must be false
 - a useful tool to describe the possible inputs of a propostiion is a *truth table*
 
-Truth Tables for Boolean Connectives
+## Truth Tables for Boolean Connectives
 |p q | p and q |
 |----|----------|
 T T | T |
@@ -48,16 +48,16 @@ T F | F |
 F T | F |
 F F | F |
 
-$p$ $q$ |  $p \lor q$
-============
-T T | T
-T F | T
-F T | T
-F F | F
+| p q | p or q |
+|-----|--------|
+T T | T |
+T F | T |
+F T | T |
+F F | F |
 
-$p$ | $\not p$
-T | F
-F | T
+| p | not p |
+T | F |
+F | T |
 
 - *Implication*: $p \implies q$ (p implies q)
 	- critical in proof
