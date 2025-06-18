@@ -41,12 +41,12 @@
 - a useful tool to describe the possible inputs of a propostiion is a *truth table*
 
 Truth Tables for Boolean Connectives
-$p q$ | $P \land Q$
-=======
-T T | T
-T F | F
-F T | F
-F F | F
+|p q | p and q |
+|----|----------|
+T T | T |
+T F | F |
+F T | F |
+F F | F |
 
 $p$ $q$ |  $p \lor q$
 ============
