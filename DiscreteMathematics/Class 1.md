@@ -82,12 +82,12 @@ F | T |
 	- *biconditional*
 	- true when $p$ and $q$ have the same truth values
 - Truth Table for the biconditional
-$p$ $q$ | $p \iff q$
-=========
-T T | T
-T F | F
-F T | F
-F F | T
+| p | q | $p iff q$ |
+|---|---|------------|
+| T | T | T |
+| T | F | F |
+| F | T | F |
+| F | F | T |
 - another way to write the biconditional
 	- $(p \implies q) \land (q \implies p)$
 $p$ $q$ | $(p \implies q) \land (q \implies p)$
@@ -106,12 +106,12 @@ $T \land T = T$
 - Converse: $q \implies p$
 - 
 
-$p$ $q$ | $\not p$ $\not q$ | $\not q \implies \not p$ | $q \implies p$
-========
-T T | F F |  T | T
-T F | F T | F | T
-F T | T F | T | F
-F F | T T | T | T
+|p q | not p not q | not q implies not p | q implies p |
+|---|--------------|--------------------|--------------|
+T T | F F |  T | T |
+T F | F T | F | T |
+F T | T F | T | F |
+F F | T T | T | T |
 
 - Thus, $\not q \implies \not p$ and $q \implies p$ is logically equivalent
 - since $p \implies q$ and $q \implies p$ do not match perfectly on the truth table, they are not logically equivalent
