@@ -82,12 +82,14 @@ F | T |
 	- *biconditional*
 	- true when $p$ and $q$ have the same truth values
 - Truth Table for the biconditional
+- 
 | p | q | $p iff q$ |
 |---|---|------------|
 | T | T | T |
 | T | F | F |
 | F | T | F |
 | F | F | T |
+
 - another way to write the biconditional
 	- $(p \implies q) \land (q \implies p)$
 $p$ $q$ | $(p \implies q) \land (q \implies p)$
