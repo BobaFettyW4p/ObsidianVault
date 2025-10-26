@@ -1,0 +1,9 @@
+- closed form
+	- nor having an algorithm express in terms of itself
+- Recurrence: $T(n) = 2 T(n/2) + \Theta(n)$
+	- each problem spawns two subproblems, each consisting of half the problem set, each instance performs O(n) work
+	- merge sort
+- Methods of solving recurrences:
+	- Iteration method/recursion trees
+	- Substition method
+	- Master theorem
