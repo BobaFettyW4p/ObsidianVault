@@ -1,6 +1,0 @@
-- multiple cases
-	- **Case 0** If $z$ has no children, simply delete it
-	- **Case 1** is $z$ has one child, then make $p[z]$ point to the singular child of $z$
-	- **Case 2** If z has two children...
-		- swap $z$ with its successor
-			- perform case $0$ or $1$ if needed

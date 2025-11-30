@@ -9,6 +9,10 @@ tags:
   - minimum-spanning-trees
   - week7
   - concept
+related:
+  - [[week7-minimum_spanning_trees/concepts/Prim's Algorithm.md|Prim's Algorithm]]
+  - [[week7-minimum_spanning_trees/concepts/Kruskal's Algorithm.md|Kruskal's Algorithm]]
+  - [[week7-minimum_spanning_trees/Week7 Dashboard|Week7 Dashboard]]
 ---
 
 - *Input:* a connected undirected graph $G = (V,E)$ with a weight function $w: E -> \mathbb{R}$

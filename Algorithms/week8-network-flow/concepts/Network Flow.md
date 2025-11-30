@@ -9,6 +9,10 @@ tags:
   - network-flow
   - week8
   - concept
+related:
+  - [[week8-network-flow/concepts/Flow Networks.md|Flow Networks]]
+  - [[week8-network-flow/concepts/Ford-Fulkerson Algorithm.md|Ford-Fulkerson Algorithm]]
+  - [[week8-network-flow/Week8 Dashboard|Week8 Dashboard]]
 ---
 
 - a category of graph optimization problems

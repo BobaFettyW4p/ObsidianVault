@@ -9,6 +9,10 @@ tags:
   - data-structures
   - week4
   - concept
+related:
+  - [[week4-data_structures/concepts/Binary Search Trees.md|Binary Search Trees]]
+  - [[week4-data_structures/concepts/Heap.md|Heaps]]
+  - [[week4-data_structures/Week4 Dashboard|Week4 Dashboard]]
 ---
 
 - a *data structure* is a way of organizing data
@@ -18,4 +22,3 @@ tags:
 List of data structures:
 - Heap
 - Hash Table
-

@@ -1,8 +1,20 @@
 ---
-
+title: "Fibonacci Recursion Tree"
+type: concept
+course: algorithms
+week: 3
+topic: dynamic programming
+tags:
+  - algorithms
+  - dynamic-programming
+  - week3
+  - concept
+  - excalidraw
+related:
+  - [[week3-dynamic_programming/concepts/Fibonacci numbers.md|Fibonacci numbers]]
+  - [[week3-dynamic_programming/pseudocode/Fibonacci Numbers Dynamic.md|Fibonacci Numbers Dynamic pseudocode]]
+  - [[week3-dynamic_programming/Week3 Dashboard|Week3 Dashboard]]
 excalidraw-plugin: parsed
-tags: [excalidraw]
-
 ---
 ==⚠  Switch to EXCALIDRAW VIEW in the MORE OPTIONS menu of this document. ⚠== You can decompress Drawing data with the command palette: 'Decompress current Excalidraw file'. For more info check in plugin settings under 'Saving'
 

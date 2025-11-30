@@ -9,6 +9,10 @@ tags:
   - breadth-first-search
   - week6
   - concept
+related:
+  - [[week6-breadth_first_search/pseudocode/BFS.md|BFS pseudocode]]
+  - [[week6-breadth_first_search/concepts/Single-Source Shortest Path.md|Single-Source Shortest Path]]
+  - [[week6-breadth_first_search/Week6 Dashboard|Week6 Dashboard]]
 ---
 
 - *Input:* $G= (V,E), S$

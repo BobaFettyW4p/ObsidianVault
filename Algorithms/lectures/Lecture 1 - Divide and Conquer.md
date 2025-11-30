@@ -1,9 +1,0 @@
-- Sorting problem
-	- Given a list of objects, rearrange in r`[in|de]` creasing order
-	- Input: An array `A[1..n]` of `n` real numbers
-	- Output: Permutation `A'` of A such that $A'[1] \leq A'[2] \dots \leq A'[n]$
-- Space complexity
-	- in place
-		- uses a constant amount of external storage
-			- equal to the size of input array
-			- 

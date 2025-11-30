@@ -1,8 +1,20 @@
 ---
-
+title: "Knapsack DP Table"
+type: proof
+course: algorithms
+week: 3
+topic: dynamic programming
+tags:
+  - algorithms
+  - dynamic-programming
+  - week3
+  - proof
+  - excalidraw
+related:
+  - [[week3-dynamic_programming/pseudocode/Knapsack problem.md|Knapsack problem pseudocode]]
+  - [[week3-dynamic_programming/proofs/Knapsack problem theorem.md|Knapsack problem theorem]]
+  - [[week3-dynamic_programming/Week3 Dashboard|Week3 Dashboard]]
 excalidraw-plugin: parsed
-tags: [excalidraw]
-
 ---
 ==⚠  Switch to EXCALIDRAW VIEW in the MORE OPTIONS menu of this document. ⚠== You can decompress Drawing data with the command palette: 'Decompress current Excalidraw file'. For more info check in plugin settings under 'Saving'
 

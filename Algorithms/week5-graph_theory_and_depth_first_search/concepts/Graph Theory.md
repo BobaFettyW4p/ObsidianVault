@@ -9,6 +9,10 @@ tags:
   - graph-theory
   - week5
   - concept
+related:
+  - [[week5-graph_theory_and_depth_first_search/concepts/Graph Representations.md|Graph Representations]]
+  - [[week5-graph_theory_and_depth_first_search/concepts/Graph search.md|Graph search]]
+  - [[week5-graph_theory_and_depth_first_search/Week5 Dashboard|Week5 Dashboard]]
 ---
 
 - a *graph* is a set of vertices and a set of edges connecting pairs of vertices

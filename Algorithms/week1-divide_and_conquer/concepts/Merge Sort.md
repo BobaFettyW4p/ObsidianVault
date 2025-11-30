@@ -1,4 +1,3 @@
-
 ---
 title: Merge Sort
 type: concept
@@ -97,4 +96,3 @@ flowchart TD
     Rsorted --> M7
     M7 --> OUT["1 2 2 3 4 5 6 7"]
 ```
-

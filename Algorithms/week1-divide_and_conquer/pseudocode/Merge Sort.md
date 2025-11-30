@@ -9,6 +9,9 @@ tags:
   - divide-and-conquer
   - week1
   - pseudocode
+related:
+  - [[week1-divide_and_conquer/concepts/Merge Sort|Merge Sort concept]]
+  - [[week1-divide_and_conquer/Week1 Dashboard|Week1 Dashboard]]
 ---
 
 ```
