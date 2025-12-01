@@ -1,3 +1,19 @@
+---
+title: "Quiz 3"
+type: problem
+course: algorithms
+week: 3
+topic: dynamic programming
+tags:
+  - algorithms
+  - dynamic-programming
+  - week3
+  - problem
+related:
+  - [[week3-dynamic_programming/concepts/Dynamic Programming.md|Dynamic Programming]]
+  - [[week3-dynamic_programming/Week3 Dashboard|Week3 Dashboard]]
+---
+
 # Prompt
 > "You are given an array $A[1..n]$ of $n$ positive integers. We say a subset of elements of $A$ is valid if it does not contain consecutive elements of the array"
 > Describe a dynamic programming algorithm that, given $n$ and the array $A[1..n]$, determines the maximum sum of elements in a valid subset of $A$.

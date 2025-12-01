@@ -1,3 +1,19 @@
+---
+title: "Midterm Problem 2"
+type: problem
+course: algorithms
+week: 1
+topic: divide and conquer
+tags:
+  - algorithms
+  - divide-and-conquer
+  - week1
+  - problem
+related:
+  - [[week1-divide_and_conquer/concepts/Recurrences.md|Recurrences]]
+  - [[week1-divide_and_conquer/Week1 Dashboard|Week1 Dashboard]]
+---
+
 ## Prompt
 > Given a sorted array $A[1..n]$ of $n$ distinct positive integers, find the smallest positive integer missing from A. Your algorithm must run in $O(log n)$ time to receive credit
 

@@ -1,3 +1,19 @@
+---
+title: "Midterm Problem 5"
+type: problem
+course: algorithms
+week: 2
+topic: random algorithms
+tags:
+  - algorithms
+  - random-algorithms
+  - week2
+  - problem
+related:
+  - [[week2-random_algorithms/concepts/Intro.md|Random Algorithms Overview]]
+  - [[week2-random_algorithms/Week2 Dashboard|Week2 Dashboard]]
+---
+
 ## Prompt
 >"You are given a sorted circular linked linked list $A[1..n]$ containing $n$ distinct integers, where every element has a "next" pointer to the next larger element, i,e, $A[i] points\ to\ A[i+1] for\ all\ i=1,\dots,n-1$ 
 >The largest element's next pointer points to the smallest element (i.e. $A[n]$ points to $A[1]$)

@@ -1,3 +1,19 @@
+---
+title: "Midterm Problem 4"
+type: problem
+course: algorithms
+week: 3
+topic: dynamic programming
+tags:
+  - algorithms
+  - dynamic-programming
+  - week3
+  - problem
+related:
+  - [[week3-dynamic_programming/concepts/Dynamic Programming.md|Dynamic Programming]]
+  - [[week3-dynamic_programming/Week3 Dashboard|Week3 Dashboard]]
+---
+
 ## Prompt
 > "A beautiful river crosses the country of Algorithmia. There are $N$ towns in the North bank of the river and $M$ towns in the South bank. The towns in the North bank and South bank are numbere $1..N$ and $1..M$ from West to East, respectively.
 > You want to build bridges between towns in the North and South bank. A bridge connecting cities $i$ and $j$ is respresented by a pair$(i,j$) where $1 \leq i < N$ and $1 \leq j < M$. The bridges must satisfy the following constraints:

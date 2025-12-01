@@ -1,3 +1,19 @@
+---
+title: "Midterm Problem 3"
+type: problem
+course: algorithms
+week: 4
+topic: data structures
+tags:
+  - algorithms
+  - data-structures
+  - week4
+  - problem
+related:
+  - [[week4-data_structures/concepts/Binary Search Trees.md|Binary Search Trees]]
+  - [[week4-data_structures/Week4 Dashboard|Week4 Dashboard]]
+---
+
 ## Prompt
 > "In this problem, you may assume that a binary search tree node $x$ has fields $x.left$, $x.right$, $x.key$, and $x.p$ (for the parent node, or NIL is $x$ is root). You may assume that the nodes of the BST are distinct"
 

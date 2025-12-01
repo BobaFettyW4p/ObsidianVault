@@ -1,3 +1,19 @@
+---
+title: "Quiz 1"
+type: problem
+course: algorithms
+week: 1
+topic: divide and conquer
+tags:
+  - algorithms
+  - divide-and-conquer
+  - week1
+  - problem
+related:
+  - [[week1-divide_and_conquer/concepts/Recursion Trees.md|Recursion Trees]]
+  - [[week1-divide_and_conquer/Week1 Dashboard|Week1 Dashboard]]
+---
+
 ## Part a
 >"What is the asymptotic running time of the following algorithm? Write a recurrence for the running time and solve it using the master theorem."
 

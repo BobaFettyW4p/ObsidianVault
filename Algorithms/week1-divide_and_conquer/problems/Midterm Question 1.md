@@ -1,3 +1,19 @@
+---
+title: "Midterm Question 1"
+type: problem
+course: algorithms
+week: 1
+topic: divide and conquer
+tags:
+  - algorithms
+  - divide-and-conquer
+  - week1
+  - problem
+related:
+  - [[week1-divide_and_conquer/concepts/Master Theorem.md|Master Theorem]]
+  - [[week1-divide_and_conquer/Week1 Dashboard|Week1 Dashboard]]
+---
+
 ### Part a prompt
 ```
 def FindMax(A[1..n]): // A[1..n] is an array of integers

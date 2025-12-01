@@ -1,3 +1,19 @@
+---
+title: "Quiz 2"
+type: problem
+course: algorithms
+week: 2
+topic: random algorithms
+tags:
+  - algorithms
+  - random-algorithms
+  - week2
+  - problem
+related:
+  - [[week2-random_algorithms/concepts/Types of random algorithms.md|Types of random algorithms]]
+  - [[week2-random_algorithms/Week2 Dashboard|Week2 Dashboard]]
+---
+
 # Prompt
 > "Suppose that we have an even-length array of booleans $A[1..n]$ where exactly half of the entries are True and half of the entries are False. Out goal is to find an index $i$ between 1 and $n$ such that $A[i]$ is true. Here is a randomized algorithm for this problem
 > Note: $\texttt{RANDOM(1,n)}$ returns an integer in the interval $[1,n]$ chosen uniformly at random. You may assume the running time of $\texttt{RANDOM(1,n)}$ is $O(1)$ "
