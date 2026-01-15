@@ -1,3 +1,5 @@
+
+
 - *Normalization* is the process of decomposing large tables into smaller ones in order to eliminate redundant/duplicate data, and to avoid problems with inserting, updating, or deleting data
 
 ### Anomalies
