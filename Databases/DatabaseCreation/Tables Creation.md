@@ -1,0 +1,66 @@
+### Table Creation
+- `CREATE TABLE table_name (
+	- `column1 datatype,`
+	- `column2 datatype,`
+	- `column3 datatype,`
+	- `...`
+- `);`
+- `CREATE TABLE PERSON (`
+	- `person_id SMALLINT,`
+	- `fname VARCHAR(20),`
+	- `lname VARCHAR(20),`
+	- `eye_color CHAR(2),`
+	- `birth_date DATE,`
+	- `street VARCHAR(30),`
+	- `city VARCHAR`(2),`
+	- `state VARCHAR(20),`
+	- `country VARCHAR(20),`
+	- `postal_code VARCHAR(20)`
+- `);`
+
+- `CREATE TABLE PERSON (`
+	- `person_id SMALLINT UNSIGNED,`
+	- `fname VARCHAR(20),`
+	- `lname VARCHAR(20),`
+	- `eye_color CHAR(2),`
+	- `birth_date DATE,`
+	- `street VARCHAR(30),`
+	- `city VARCHAR`(2),`
+	- `state VARCHAR(20),`
+	- `country VARCHAR(20),`
+	- `postal_code VARCHAR(20)`
+- `);`
+
+- `CREATE TABLE PERSON (`
+	- `person_id SMALLINT UNSIGNED,`
+	- `fname VARCHAR(20) NOT NULL,`
+	- `lname VARCHAR(20) NOT NULL,`
+	- `eye_color CHAR(2),`
+	- `birth_date DATE,`
+	- `street VARCHAR(30),`
+	- `city VARCHAR`(2),`
+	- `state VARCHAR(20),`
+	- `country VARCHAR(20),`
+	- `postal_code VARCHAR(20)`
+- `);`
+- `CREATE TABLE PERSON (`
+	- `person_id SMALLINT UNSIGNED,`
+	- `fname VARCHAR(20),`
+	- `lname VARCHAR(20),`
+	- `eye_color CHAR(2),`
+	- `birth_date DATE,`
+	- `street VARCHAR(30),`
+	- `city VARCHAR`(2),`
+	- `state VARCHAR(20) DEFAULT 'IL',`
+	- `country VARCHAR(20),`
+	- `postal_code VARCHAR(20)`
+- `);`
+
+### Table Commands
+- Display names of existing tables
+	- `SHOW tables;`
+- Create a table that does not already exist
+	- `CREATE TABLE IF NOT EXISTS my_table ( ... )`
+- Display the columns of a table
+	- `DESCRIBE my_table;`
+
