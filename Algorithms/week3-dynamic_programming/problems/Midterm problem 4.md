@@ -60,7 +60,7 @@ def MaxBridgeValue(U[1..N],V[1..M]):
 		DP[0][j] = 0
 	for i=1 to N:
 		for j=1 to M:
-			DP[i][j] - max(DP[i-1][j],DP[i][j-1],DP[i-1][j-1]+U[i]+V[j])
+			DP[i][j] = max(DP[i-1][j],DP[i][j-1],DP[i-1][j-1]+U[i]+V[j])
 	return DP[N][M]
 ```
 

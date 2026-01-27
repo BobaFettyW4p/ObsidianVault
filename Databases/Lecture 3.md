@@ -1,0 +1,18 @@
+## Goals
+- create query to fetch from database
+	- filter data from database
+	- sort data from database
+	- fetch data from multiple tables
+- SELECT and FROM Clause
+- WHERE clause
+- LIMIT CLAUSE (return a lmited number of rows instead of the entire table)
+	- OFFSET
+- ORDER BY
+- Common Operators
+- UNION combines the results of two or more SELECT statemnets
+	- # of columns must match
+	- column names do not have to match
+	- data types must match
+	- JOINs link multiple tables together in one query, UNION stacks the results of multiple queries
+- GROUP BY collects rows into groups and summarizes the rows within the groups in some way
+	- ultimately, one row per group is returned
