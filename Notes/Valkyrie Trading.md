@@ -49,5 +49,5 @@ Salary Range
 
 - Nick and Eric
 - Head of DevOps and TradeOps
-- realmd and sshd - manage group associations for ssh access
+- realmd and sssd - manage group associations for ssh access
 frone end v backend; trading v test and development; ops v. projects; 
