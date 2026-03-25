@@ -1,6 +1,6 @@
 - it is a mechanism for querying data
 - it is a result of the query
-- it has a anme
+- it has a name
 - the output of a query is a single table
 - the difference between a view and a table is that a view does not hold any data itself like a table, it just references the data instead
 

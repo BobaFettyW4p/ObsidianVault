@@ -1,0 +1,10 @@
+- to connect:
+	- `mysql -u USER -p`
+- to execute a SQL query
+	- `mysql -u USER -p PASSWORD -e "SQL_QUERY"`
+- Execute SQL query in a database
+	- `mysql -u USER -p PASSWORD -D DATABASE -e "SQL_QUERY"`
+- Run SQL query on the explicitly specified host
+	- `mysql -u USER -p PASSWORD -h HOSTNAME -e "SQL_QUERY"`
+- Save the output to a file
+	- `mysql -u USER -p PASSWORD -e "SQL_QUERY" > FILE`
