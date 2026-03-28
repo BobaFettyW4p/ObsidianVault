@@ -138,3 +138,131 @@
 - most personal mobile devices uses *LCDs* to get a thin, low-power display
 	- most contain rod-shaped molecules in a liquid that bend light entering the display
 	- most use an *active matrix* that has a tiny transistor switch to precisely control current and make images
+	- the image is composed of a matrix of picture elements, or *pixels*
+		- screens consist of hundreds of thousands to millions of pixels, organized in a matrix
+- computer hardware support for graphics consists of a *raster refresh buffer* (*frame buffer*), which stores the bit map
+	- the image to be represented is stored in the frame buffer, and the bit pattern is read to the graphics display at the refresh rate
+		- the objective of the bit map is to faithfully represent what should be displayed on the screen
+![[Pasted image 20260327184049.png]]
+- many touchscreens today use capacitive sensing
+	- humans are electrical conductors, so covering the screen in a transparent conductor means that touching the screen distorts the electrostatic field of the screen
+		- this changes the capacitance and can be interpreted by the computer attached to the touch screen
+- *integrated circuit* - also called a *chip*
+	- a device containing dozens to millions of transistors
+- the processor is the active part of the computer
+	- it follows the instructions and adds numbers, tests them, signals I/O devices to follow, and so on
+	- often referred to as the *central processor unit (CPU)*
+- logically, the processor is comprised of two main components
+	- the *datapath* performs all arithmetic operations
+	- *control* tells the datapath, memory, and I/O what to do according to the wishes of the program instructions
+- the *memory* is the storage area in which programs are kept when they are running
+	- it contains the data needed by the running programs
+	- memory is built from *DRAM* chips
+		- DRAM is short for *dynamic random access memory*
+			- DRAM is memory built as an integrated circuit
+				- it provides random access to any location
+					- access time: ~50 nanoseconds
+		- multiple DRAMs are used together to contain the instructions and data of a program
+		- the random nature of DRAM ensures that memory accesses take basically the same amount of time regardless of what portion of the memory is read
+			- this in contrast to sequential access, where access the beginning is much quicker than the end
+- the processor contains one more type of memory - *cache memory*
+	- cache memory is a small, fast memory that acts as a buffer for DRAM memory
+	- caches are built using *static random access memory (SRAM)*
+		- SRAM is faster and less dense than DRAM
+			- thus more expensive
+			- SRAM and DRAM are two layers of the memory hierarchy
+- one of the most important abstractions is the interface between hardware and the lowest-level of softwrae
+	- referred to as the *instruction set architecture* or simply the *architecture*
+		- it includes anything programmers need to know to make a binary machine program owrk correctly
+			- instructions, I/O devices, etc.
+			- these instructions are generally encapsulated in the operating system, which enables application programmers to simply leverage the OS to accomplish these things
+- the combination of the basic instruction set and the operating system interface provided for application programmers is called the *application binary interface (ABI)*
+- instruction sets allow computer designers to talk about functions independent from the hardware that performs them
+	- e.g. we can discuss a digital clock (keeping time, setting an alarm, etc.) independent from the physical clock hardware (quartz crystal)
+	- in general, we also distinguish between architecture and an implementation of that architecture
+>"Both hardware and software consist of hierarchical layers using abstraction, with each lower layer hiding details from the level above. One key interface between the levels of abstraction is the instruction set architecture - the interface between the hardware and low-level software. this abstract interface enables many implementations of varying cost and performance to run identical software
+
+##### A Safe Place for Data
+- computer memory is *volatile*, when power to the computer is lost, everything in memory is erased
+- *nonvolatile memory* is a form of memory that retains data even in the absence of a power source
+	- used to store programs between runs
+- the term *main memory* or *primary memory* is used to refer to the volatile memory used to hold programs while in use
+- *secondary memory* is used to refer to the nonvolatile memory used to store programs between runs
+	- forms the next lower layer of the memory hierarchy
+- *magnetic disks*, also called *hard disks* are a form of secondary memory composed of rotating platters coated with a magnetic coating mechanical
+	- access times are ~5 to 20 milliseconds
+	- dominated secondary memory since almost the dawn of computing
+		- have recently been replaced with *flash memory*
+			- cheaper and slower than DRAM but more expensive and faster than magnetic disks
+			- more rugged and more power efficient than disks
+			- tend to wear out over time after too many writes
+##### Communicating with Other Computers
+- networks are in a way, the backbone of current computer systems
+- networked computers have several major advantages:
+	- **Communication** - information is exchanged between computers at high speeds
+	- **Resource sharing** - as opposed to each computer having its own I/O devices, computers on the network can share I/O devices
+	- **Nonlocal access** - enables users to access computer resources they are not physically near
+- networks vary in length and performance, with the cost of communication increasing according to the speed of communicaton and distance travelled
+	- *Ethernet* can transfer 40 gigabits per second up to a kilometer long
+		- useful to connect computers on the same floor of a building
+		- example of a *local area network*
+			- in comparison, *wide area networks* cross continents and are the backbone of the internet
+				- are based on optical fibers and are leased from telecommunications companies
+
+### Technologies for Building Processors and Memory
+- processors and memory have improved at an incredible rate
+![[Pasted image 20260327193051.png]]
+- a *transistor* is simply an on/off switch controlled by electricity
+- the *integrated circuit (IC)* combined dozens to hundreds of transistors into a single chip
+	- to describe the tremendous increase in transistor numbers from hundreds to millions, the *very large-scale integrated circuit (VLSI)* was created
+- for decades, the growth in DRAM capacity has quadrupled every 3 years
+![[Pasted image 20260327193525.png]]
+- the manufacture of a chip begins with *silicon*, an element found in sand
+	- it does not conduct electricity well, and thus is considered a *semiconductor*
+	- it is possible to transform silicon into different forms via a chemical process:
+		- excellent conductors of electricity (using microscopic copper or aluminum wire)
+		- excellent insulators from electricity (like plastic sheathing or glass)
+		- areas that can conduct or insulate under special conditions
+			- transistors fall under this category
+- a VLSI circuit is billions of conductors, insulators and switches manufactured in a single small package
+- the chip manufacturing process is critical to the cost of chips and important to computer designers
+![[Pasted image 20260327194035.png]]
+- process begins with a *silicon crystal ingot*, which a rod composed of a silicon crystal between 8 and 12 inches in diameter and 12-24 inches long
+- an ingot is sliced into *wafers* no more than 0.1 inches thick
+- these wafers go through a series of processing steps
+	- in each step, patterns of chemicals are placed on each wafer, which creates the transistors, conductors and insulators referenced earlier
+- a single microscopic flaw can result in that area of the wafer failing
+	- this is referred to as a *defect*
+	- it's virtually impossible to manufacture a perfect way
+		- generally best to place many independent components on a single wafer
+			- this wafer is diced into these components
+				- the individual components are called *dies*
+- dicing allows you to only discard the portions of the wafer that have defects on them
+	- quantified by the *yield* of the process, which is the percentage of good dies from the total number of dies on the wafer
+- the cost of an integrated circuit rises quickly as the die size increases
+	- leads to a lower yield
+	- also creates a smaller number of dies that fit on a wafer
+- good dies are connected to the I/O pins of a package using a process called *bonding*
+- The cost of an integrated circuit can be expressed in three equations:
+	- $\text{Cost per die} = \frac{\text{Cost per wafer}}{\text{Dies per wafer} * yield}$
+	- $\text{Dies per wafer} \approx \frac{\text{Wafer area}}{\text{Die area}}$
+	- $yield = \frac{1}{(1+(\text{Defects per area} * \text{Die area}/2))^2}$
+- depending on defect rate and the size of the die and wafer, costs are generally not linear in the die area
+### Performance
+- assessing the performance of computers can be challenging
+	- scale and intricacy, as well as the wide range of performance improvement techniques make performance assessment difficult
+- accurately measuring and comparing different computers is critical to purchasers and therefore to designers
+#### Defining Performance
+- what do we mean when we say one computer has better performance than another?
+- if running a program on two different desktop computers, you might say the faster computer is the one that finishes first
+- if running a datacenter, you might say the faster computer was the one that completed the most jobs
+- as an individual computer user, you are likely most interested in reducing *response time* - the time between the start and the completion of a task
+	- response time is also referred to as *execution time*
+- we are generally also concerned with *throughput* - the number of tasks completed per unit time
+	- also called *bandwidth*
+- in general, the terminology *as fast* will be used when comparing computers quantitatively
+	- performance and execution time are reciprocals, so increasing performance requires decreasing execution time
+#### Measuring Performance
+- time is the measure of computer performance
+	- the computer that performs the same work in the least time is the fastest
+	- execution time is measured in seconds per program generally, but can be measured in different ways
