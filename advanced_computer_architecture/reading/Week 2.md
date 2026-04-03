@@ -182,3 +182,95 @@ $$
 ![[Pasted image 20260402212433.png]]
 - here is how some scenarios would be handling trying to find things in it
 ![[Pasted image 20260402212502.png]]
+- a referenced address can be divided into:
+	- a *tag field*, which is used to compare with the value of the tag field fo the cache
+	- a *cache index*, which is used to select the block
+- the index of a cache block, along with the tag contents of that block uniquely specify the memory address of the word contained in the cache block
+- because the index field is used to reference the cache, and because an $n$-bit field has $2^n$ values, the total number of entries in a direct mapped cache must be a power of 2
+- in MIPS architecture, words are aligned to multiples of 4 bytes
+	- this means the least significant two bits of every address specify a byte within a word
+		- the least significant two bits are ignored when selecting a word in the block
+- the total number of bits needed for a cache is a is a function of the cache size and address size
+	- the cache includes both the storage for the data and the tags
+	- consider the following situation:
+		- 32 bit address
+		- a direct mapped cache\
+		- cache size is $2^n$ blocks
+			- $n$ bits are used for the index
+		- the block size is $2^m$ words ($2^{m+2}$ bytes)
+			- $m$ bits are used for the word within the block, and two bits are used for the byte part of the address
+		- in this example, the size of the tag field is $32 - (n+m+2)$
+		- the total number of bits in a direct-mapped cache is $2^n * (\text{block size} + \text{tag size} + \text{valid field size})$
+		- since the block size is $2^m$ words ($2^{m+5}$ bits), and we need 1 bit for the valid field, the number of bits in this cache is as follows:
+$$
+2^n * (2^m * 32 (32 -n -m -2) + 1) = 2^n * (2^m * 32 +  31 - n - m)
+$$
+- this is the actual size in bits, but the naming convention is to exclude the size of the tag and valid field and only count the size of the data
+	- the cache in the below image is referrred to as a 4 KiB cache
+![[Pasted image 20260403112500.png]]
+
+## Questions
+>How many total bits are required for a direct-mapped cache with 16 KiB of data and 4-word blocks, assuming a 32-bit address
+
+- we know that 16 KiB is 4096 ($2^{12}$ words)
+- with a block size of 4($2^2$) words, there are 1024 ($2^{10}$) blocks
+	- each block has $4 * 32$ or 128 bits of data plus a tag which is $32 - 10 - 2 - 2$ bits as well as a valid bit
+- this means the total cache size is:
+$$
+2^{10} * (4 * 32 + (32 - 10 -2 -2) + 1) = 2^{10} * 147 = 147 \text{ Kibibits}
+$$
+>Consider a cache with 64 blocks and a block size of 16 bytes. To what block number does byte address 1200 map?
+
+- the block is given by $\text{(block address) modulo (number of blocks in the cache)}$
+- where the address of the block is:
+$$
+\frac{\text{Byte address}}{\text{Bytes per block}}
+$$
+- this block address is the block containing all addresses between:
+$$
+\left| \frac{\text{Byte address}}{\text{Bytes per block}} \right| * \text{Bytes per block}
+$$
+and
+$$
+\left| \frac{\text{Byte address}}{\text{Bytes per block}} \right| * \text{Bytes per block} + (\text{Bytes per block -1})
+$$
+- with 16 bytes per block, byte address 1200 corresponds to block address:
+$$
+\left| \frac{1200}{6} \right|= 75
+$$
+
+- larger blocks exploit spatial locality to lower miss rates
+- increasing block size usually decreases the miss rate
+	- it may go up eventually if the block size becomes a significant fraction of the cache size
+		- there are a small number of blocks, with great competition for them
+			- blocks become bumped out of the cache before many of its words are accessed
+- spatial locality among words in the block decreases with a very large block
+	- the benefits in miss rate decrease
+![[Pasted image 20260403114534.png]]
+
+- a serious problem associated with just increasing the block size is the cost of a miss increases
+	- the miss penalty is determined by the time required to fetch the block from the lower level of the hierarchy and load it into the cache
+		- the time to fetch the block has two parts:
+			- the latency to the first word
+			- transfer time for the rest of the block
+		- as the transfer time increases along with an increased block size, so will the miss penalty
+### Handling Cache Misses
+- a *cache miss* is a request for data from the cache that cannot be filled because the data is not present in the cache
+- the control unit must detect a miss, and then process that miss by fetching the data from memory (or from a lower level cache)
+	- if the cache reports a hit, the computer continues using the data as if nothing happened
+- modifying control of a processor to handle a hit is trivial
+	- misses require some work
+- cache miss handling is done in collaboration with the processor control unit and a separate controller that initiates the memory access and refills the cache
+- processing the cache miss creates a pipeline stall as opposed to an interrupt
+	- an interrupt would require saving the state of all registers
+- cache misses can stall the entire processor, which freezes the contents of the temporary and programmer-visible registers
+	- this is done while we wait for memory
+- more sophisticated out-of-order processors exist and can allow execution of instructions while waiting for a cache miss
+	- our examples assume in-order processors that stall on cache misses
+- how are instruction misses handled?
+	- same approach is easily extended to data misses
+	- if an instruction access results in a miss, then the content of the Instruction register is invalid
+	- to get the proper instruction into the cache, we must be able to instruct the lower level in the memory hierarchy to perform a read
+	- since the program counter is incremented in the first clock cycle of execution, the address of the instruction that generates an instruction cache miss is equal to the value of program counter minus 4
+	- once we have the address, we need to instruct the main memory to perform a read
+	- we wait for the memory to respond (this can take several clock cycles), and then write the words containing the desired instruction into the cache
