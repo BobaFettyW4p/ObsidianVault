@@ -47,4 +47,56 @@ a rough order of magnitude of comparison:
 			- time taken: miss penalty
 			- miss ratio: misses/accesses = 1 - hit raio
 			- then accessed data is supplied rom an upper level
-	- 
+### Using midway3 and PAPI
+- PAPI - pap-ee - way to get access to the hardware counters, i.e. registers that record how our algorithme xercises the hardware and give us insight into how it performs and why
+	- give us insights to improve
+- `ssh midway.rcc.uchicago.edu -l ivancicm`
+	- brings you to a login node
+		- lets you compile, access shared file system
+			- not intended for serious computing
+			- not intended for performance analysis
+				- it's a shared resource
+- need to request a compute node from the login node
+	- two ways to access them:
+		- share with other peopel - we don't want this
+		- access them exclusively
+			- whatever we run is the only thin running on the node
+				- gives us the most reliable data
+- `rcchelp sinfo`
+	- gives a list of partitions
+	- midway is built as login nodes with compute nodes
+		- compute nodes are separated into partitions, which denotes the type of hardware
+	- `caslake` is the largest and is the standard hardware to request
+- `sinteractive --account=mpcs52018 --partition=caslake --time==00:20:00`
+	- requests an interactive session
+	- specifies the account, partition, and time requested for
+- `lscpu`
+	- gives you data on the node you land on
+- `module load papi`
+	- can load other things like `emacs` or `intel`
+	- `module avail`
+	- use `papi/6.0` in this class
+- PAPI gets embedded in your code, but it also comes with a set of binaries that are useful for a particular installation of it
+- `papi_avail`
+	- lists all events that occur in the hardware that are defined in PAPI and can be counted
+- to actually compile:
+	- `gcc papi_test.c -o papi_test -lpapi`
+- best to only measure one thing at a time to start
+
+### Quantitative Analysis of Cache Performance
+- come up with a simple model and measured impact performance
+	- determine the memory hierarchy for given setups
+- take a complex system, model its essential features, gives you a good idea of the performance as a whole
+
+- components of CPU time
+	- program execution cycles
+		- includes cache hit time
+	- memory stall cycles
+		- mainly from cache misses
+- with simplifying assumptions:
+- $\text{Memory stall cycles} = \frac{\text{MEmory accesses}}{\text{Program}} * \text{Miss rate} * \text{Miss penalty}$
+- $=\frac{Instructions}{Program}*\frac{Misses}{Instruction}*\text{Miss penalty}$
+- when CPU performance increases, miss penalties become more significant
+- decreasomg base CPI means you spend a greater proportion of time on memory stalls
+- increasing clock rate means memory stalls account for more CPU cycles
+- can't neglect cache behavior when evaluating system performance
