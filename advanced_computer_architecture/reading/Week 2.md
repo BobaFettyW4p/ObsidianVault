@@ -580,3 +580,233 @@ $$
 	- for a four-way set-associative cache, there are 1-24
 		- the total number of tag bits is $(28-10)*4*1024 = 72*1024 = 74K$ tag bits
 	- for a fully associative cache, there is one set with 4096 blocks, and the tag is 28 bits, leading to $28*4096*1 = 115K$ tag bits
+### Reducing the Miss Penalty Using Multilevel Caches
+- all modern computers make use of caches
+- to close the gap between fast clock rates and increasing long times required to access DRAM, most microprocessors support an additional level of caching
+	- this second level cache is normally on the same chip and is accessed whenever a miss occurs in the primary cache
+		- if the second level cache contains the desired data, the miss penalty for the first-level cache will essentially be the access time of the second level cache
+			- this is much less than the time to access main memory
+			- if the second level cache does not contain the data either, main memory access is needed, which incurs a greater miss penalty
+##### Performance of Multilevel Cachces
+>Suppose we have a processor with a base CPI of 1.0, assuming all references hit in the primary cache, and a clock rate of 4.0 GHz. Assume a main memory access time of 100 ns, including all miss handling. Suppose the miss rate per instruction of the primary cache is 2%. How much faster will the processor be if we add a secondary cache that has a 5 ns access time for either a hit or a miss and is large enough to reduce the miss rate to main memory to 0.5%?
+
+- the miss penalty to main memory is
+$$
+\frac{100\ ns}{0.25 \frac{ns}{\text{clock cycle}}} = 400 \text{ clock cycles}
+$$
+- the effective CPI with one level of caching is given by
+$$
+\text{Total CPI} = \text{Base CPI} + \text{Memory-stall cycles per instruction}
+$$
+- for the processor with one level of caching:
+$$
+\text{Total CPI} = 1.0 + \text{Memory-stall cycles per instruction} = 1.0 + 2\% * 400 = 0
+$$
+- with two levels of caching, a miss in the primary (or first level cache) can be satisfied either by the secondary cache or by main memory. The miss penalty for access to the second-level cache is:
+$$
+\frac{5\ ns}{0.25\frac{ns}{\text{clock cycle}}} = 20 \text{ clock cycles}
+$$
+- if the miss is satisfied in the secondary cache, this is the entire miss penalty
+	- if the miss needs to go to main memory, then the total miss penalty is the sum of the secondary cache access time and the main memory access time
+- for a two level cache, total CPI is the sum of the stall cycles from both levels of cache and the base CPI:
+$$
+\text{Total CPI} = 1 + \text{Primary stalls per instruction} + \text{Secondary stalls per instruction} = 1 + 2\% * 20 + 0.5\% * 400 = 1 + 0.4 + 2.0 = 3.4
+$$
+- $\therefore$, the processor with the secondary cache is faster by
+$$
+\frac{9.0}{3.4} = 2.6
+$$
+- alternatively, you can compute the stall cycles by summing the stall cycles of references that hit in the secondary cache (($2\% - 0.5\%$)* 20 = 0.3)
+	- those references go to main memory, which must include the cost to access the secondary cache as well as the main memory access time, which is ($0.5\% * (20 + 400) = 2.1$)
+		- the sum of these two values, $1.0 + 0.3 + 2.1$ equals the value we received earlier ($3.4$)
+- design considerations for a primary and secondary cache are significantly different
+	- the presence of the other cache changes the best choice compared to a single-level cache
+		- a two-level cache structure allows the primary cache to focus on minimizing hit time to yield a shorter clock cycle or fewer pipeline stages
+			- the secondary cache can focus on miss rate to reduce the penalty of long memory access times
+	- these effects can e seen by comparing each stage to the optimal design of a single level of cache
+		- in comparison, the primary cache of a *multilevel cache* is smaller
+			- the primary cache will use a smaller block size to reduce the miss penalty
+			- the secondary cache will be much larger
+				- the access time of the secondary cache is less critical
+				- a larger total size corresponds to a larger block size than is appropriate with a single level cache
+				- will often use higher associativity
+					- the focus is on reducing miss rates
+![[Pasted image 20260403154422.png]]
+
+### Software Optimization via Blocking
+- many software optimizations were invented that can dramatically improve performance by reusing data within the cache and lower miss rates with improved temporal locality
+- when dealing with arrays, we can get good performance if we store the entire array such that accesses to the array are sequential in memory
+	- consider a situation where we are dealing with multiple arrays with some accessed by rows and some by columns
+		- storing them row-by-row (*row major order*) or column-by-column (*column major order*) does not solve the problem because both rows and columns are used in every major iteration
+			- instead of operating on entire rows or columns, *blocked* algorithms operate on submatrices (*blocks*)
+				- the goal is to maximize accesses to the data loaded into the cache before the data is replaced
+					- i.e. improve temporal locality to reduce cache misses
+					- consider this block of code:
+```
+for(int j=0; j<n; j++)
+{
+double cij = C[i+j*n]; /* cij = C[i][j] */
+for (int k=0; k<n; k++)
+cij += A[i+k*n] * B[k+j*n]; /* cij = A[i][k] * B[k][j] */
+C[i+j*n] = cij; /* C[i][j] = cij */
+}
+}
+```
+- it reads all $N$ by $N$ elements of $B$, reads the same $N$ elements that correspond to one row of $A$ repeatedly and writes what corresponds to one row of $N$ elements of $C$
+![[Pasted image 20260403155204.png]]
+- this gives us a snapshot of the three arrays
+	- a dark shade is a recent access, a light shade is an older access, and white means not yet accessed
+- the number of capacity misses depends on $N$ and the size of the cache
+	- if it can hold all three $N$-by-$N$ matrices, then all is well provied there is no cache conflicts
+	- if the cache can hold one $N$-by$N$ matrix and one row of $N$, then at least the $i$th row of $A$ and the array $B$ may stay in the cache
+		- less than that and misses may occur for both $B$ and $C$
+			- in the worst case, there would $2 N^3 + N^2$ memory words accessed for $N^3$ operations
+- to ensure that the elements being accessed can fit in the cache, the original code is changed to compute on a submatrix
+	- we invoke the same code on matrices of size $BLOCKSIZE$ by $BLOCKSIZE$
+		- $BLOCKSIZE$ is what is called the *blocking factor*
+- the blocked version of the code looks like so:
+```
+#define BLOCKSIZE 32
+void do_block (int n, int si, int sj, int sk, double *A, double *B, double *C)
+{
+	for (int i=si; i<si+BLOCKSIZE; ++i)
+	{
+		for (int j = sj; j < sj+BLOCKSIZE; ++j)
+		{
+		double cij = C[i+j*n]; /* cij = C[i][j] */
+		for (int k = sk; k < sk+BLOCKSIZE; k++)
+			{
+			cij += A[i+k*n] * B[k+j*n] /* cij+=A[i][k]*B[k][j] */
+			C[i+j*n] = cij; /* C[i][j] = cij */
+			}
+		}
+	}	
+}
+void dgemm (int n, double* A, double* B, double* C)
+{
+	for (int sj=0; sj < n; sj += BLOCKSIZE)
+	{
+		for (int si = 0; si < n; si += BLOCKSIZE)
+		{
+			for (int sk=0; sk < n; sk+= BLOCKSIZE)
+			{
+				do_block(n,si,sj,sk,A,B,C)
+			}
+		}
+	}
+}
+```
+
+- access age to the array is as follows:
+![[Pasted image 20260403160210.png]]
+- as we can see, there are fewer accesses to the arrays overall
+- while blocking is intended to reduce cache misses, it can also be used to help register allocation
+	- by taking a small blocking size such that the block can be held in registers, we can minimize the number of loads and stores in the program, which improves performance
+![[Pasted image 20260403160321.png]]
+- multilevel caches create several complications
+	- there are now several different types of misses, each with its own corresponding miss rate
+		- *global miss rate* - the fraction of references that miss in all levels of a multilevel cache
+		- *local miss rate* - the fraction of references to one level of a cache that miss
+		- because the primary cache filters accesses, the local miss rate is generally much higher than the global miss rate for all level in a multilevel cache hierarchy
+			- global miss rates dictates how often main memory must be accessed
+		- there is no general way to calculate overlapped miss latency
+## Dependable Memory Hierarchy
+- memory hierarchy doesn't forget
+	- fast but undependable isn't attractive
+### Defining Failure
+- assume you have a specification of proper service
+	- thus, we can see a system alternating between two states of delivered service
+		- *service accomplishment*, where the service is delivered as expected
+		- *service interruption*, where the delivered service is different form the specified service
+			- transitions from state 1 to state 2 are caused by *failures*, and transitions from state 2 to state 1 are called *restorations*
+				- failures can be permanent or intermittent
+				- leads to two related terms: reliability and availability
+					- *reliaibility* is a measure of the continuous service accomplishment from a reference point
+						- *mean time to failure (MTTF)* is a reference point
+							- a related term is *annual failure rate (AFR)*
+								- the percentage of devices that would be expected to fail in a year for a given MTTF
+##### MTTF v. AFR of disks
+>Some disks today are quoted to have a 1,000,000 hour MTTF. As 1,000,000 hours is $1,000,000/(365 * 24) = 114$ years, it would seem they practically never fail. Warehouse scale computers that run Internet services such as search might have 50,000 servers. Assume each server has 2 disks. Use AFR to calculate how many disks we would expect to fail each year.
+
+- one year is $365*24 = 8760$ hours
+	- a 1,000,000-hour MTTF means an AFR of $8760/1,000,000 = 0.876\%$
+		- with 100,000 disks, we expect 876 disks to fail per year
+			- i.e. more than 2 per day on average
+- service interruption is measured as *mean time to repair (MTTR)*
+- *mean time between failures (MTBF)* is simply the sum of MTTF + MTTR
+	- while the term MTBF is more widely used, MTTR is often more appropriate
+- *availability* is a measure of service accomplishment with respect to the alternation between two states of accomplishment and interruption
+- availability is quantified as:
+$$
+\text{Availability} = \frac{\text{MTTF}}{(\text{MTTF} + \text{MTTR})}
+$$
+- reliability and availability are actually quantifiable measure, not just synonyms for dependaility
+	- shrinking MTTR can help availability as much as increasing MTTF
+- availability should be very high
+	- often quoted in 'number of nines' of availability
+		- one 9: 90% = 36.5 days of repair/year
+		- two 9s: 99% = 3.65 days of repair/year
+		- three 9s: 99.9% = 526 minutes of repair/year
+		- four 9s: 99.99% = 52.6 minutes of repair/year
+		- five 9s: 99.999% = 5.26 minutes of repair/year
+- to increase MTTF, you can improve quality of components or design systems to continue operations in the presence of failed components
+	- failure must be defined in context
+		- the failure of a component may not lead to failure of a system
+- three ways to increase MTTS:
+	- *fault avoidance*: preventing fault occurrence by construction
+	- *fault tolerance*: using redundancy to allow the service to comply with the service specification despite faults occurring
+	- *fault forecasting*: predicting the presence and creation of faults, allowing the component to be replaced before it fails
+#### The Hamming Single Error Correcting, Double Error Detecting Code (SEC/DED)
+- to invent redundant codes, it is improtant to talk about how "close" correct bit patterns can be
+	- the *Hamming distance* is the minimum number of bits that are different between any two correct bit patterns
+		- the distance between `011011` and `001111` is two
+		- if the minimum distance between correct patterns is two and we get a one bit error, a correct pattern will turn into an incorrect one
+- Hamming used a *parity code* for error detection
+	- in a parity code, the number of $1s$ in a word is counted
+		- the word has odd parity if there is an odd number of 1s, and even otherwise
+	- when a word is written into memory, the parity bit is also written (1 for odd, 0 for even)
+		- if the parity of the word and the stored parity bit don't match, an error has occurred
+>Calculate the parity of a byte with the value $31_{ten}$ and show the pattern stored to memory. Assume the parity bit is on the right. Suppose the most significant bit was inverted in memory, and then you read it back. Did you detect the error? What happens if the two most significant bits are inverted?
+
+- $31_{ten}$ is $00011111_{two}$ which has 5 1s, and thus has an odd parity
+	- to make it even, we need to write a 1 in the parity bit, giving us $000111111_{two}$
+		- if the most significant bit is inverted, we would see $100111111_{two}$, which has seven ones
+			- since we expect even parity and got odd parity, this would signal an error
+			- if two bits were inverted, we would still have even parity and will not detect an error
+- Hamming also wanted to resolve errors, not just detect them
+	- we use extra parity bits to allow the position identification of a single error
+		- Start numbering bits from 1 on the left, as opposed to the numbering of the rightmost bit being 0
+		- mark all bit positions that are powers of two as parity bits (positions 1,2,4,8,16, etc.)
+		- all other bit positions are used for data bits
+		- the position of parity bit determines sequence of data bits that it checks
+			- bit 1 checks bits (1,3,5,7,9,...) which are bits where the rightmost bit of address is 1
+			- bit 2 checks bits (2,3,6,7,10,...) which are bits where the second bit to the right of the address is 1
+			- bit 4 checks bits (4-7, 12-15, 20-23) which are bits where the third bit to the right in the address in 1, and so on
+				- each data bit is checked by two or more parity bits
+		- finally, we set parity bits to create even for each group
+			- this will let us determine which bits are correct and incorrect by using the parity bits
+![[Pasted image 20260403163334.png]]
+- this does not just apply to single-bit errors
+	- for the cost of one bit, we can also detect double bit errors with a minimum Hamming distance of 4
+- Single Error Correcting/Double Error Detecting (SEC/DED) is common in memory for servers today
+	- 8 byte blocks can get SEC/DED with just one additional byte
+		- why most DIMMs are 72 bits wide
+- to calculate the number of bits needed for SEC/DED
+	- let $p$ be the number of parity bits, and $d$ be the number of data bits
+	- if $p$ error correction bits are to point to error bit ($p+d$ cases) plus one case to indicate that no error exists, we need:
+$$
+2^p \geq p + d + 1 \text{bits}
+$$
+- therefore:
+$$
+p \geq log(p+d+1)
+$$
+- for 8 bits of data, $d=8$
+$$
+2^p \geq p + 8 + 1
+$$
+so $p=4
+- $p=5$ for 16 bits of data
+- $p=6$ for 32 bits of data
+- $p=7$ for 64 bits
+- and so on
