@@ -10,7 +10,7 @@
    			- if an item is referenced, it will tend to be referenced again soon
   		- *spatial locality*
     - if an item is referenced, items whose addresses are close by will tend to be referenced soon
-![[Pasted image 20260401215208.png]]
+![[screenshots/Pasted image 20260401215208.png]]
 - locality in programs arises from natural program structures
  	- most programs contain loops, so instructions and data are likely to be accessed repeatedly
   		- temporal locality
@@ -25,7 +25,7 @@
     				- all data is stored at the lowest level
 - a memory hierarchy can consist of multiple levels, but data is copied between only two adjacent levels at a time
 
-![[Pasted image 20260402185228.png]]
+![[screenshots/Pasted image 20260402185228.png]]
 
 - the upper level (the one closer to the processor) is smaller and faster than the lower level
  	- the upper level uses technology that is more expensive
@@ -59,7 +59,7 @@
 - if the hit rate is high enough, the memory hierarchy has an effective access close to that of the highest level and a size equal to the lowest level
 - in most systems, the memory is a true hierarchy
  	- data cannot be present in level $i$ unless it is also present in level $i+1$
-![[Pasted image 20260402191617.png]]
+![[screenshots/Pasted image 20260402191617.png]]
 
 ## Memory Technologies
 
@@ -69,7 +69,7 @@
  	- flash memory is the nonvolatile secondary memory in personal mobile devices
  	- magnetic disk is the cheapest and slowest memory technology
 
-![[Pasted image 20260402203228.png]]
+![[screenshots/Pasted image 20260402203228.png]]
 
 ### SRAM Technology
 
@@ -98,7 +98,7 @@
  	- charge can be kept for several milliseconds
 - DRAMs use a two-level decoding structure which allows an entire row to refreshed in a single read cycle followed by a write cycle
 - row organization helps with refresh, but it also helps with performance
-![[Pasted image 20260402205026.png]]
+![[screenshots/Pasted image 20260402205026.png]]
 - DRAMs buffer rows for repeated access
  	- acts like a SRAM
   		- random bits can be accessed in the buffer until the next row is accessed
@@ -116,7 +116,7 @@
       						- instead of just a faster row buffer, DRAM can be interanlly organized to read or write from multiple *banks*
        							- each bank has its own row buffer
         								- each bank can read or write simultaneously
-![[Pasted image 20260402205512.png]]
+![[screenshots/Pasted image 20260402205512.png]]
 - personal devices use individual DRAMs, server memory is often sold on small boards called *dual inline memory modules (DIMMs)*
  	- DIMMs typically contain 4-16 DRAMs, normally organized to be 8 bytes wide
 
@@ -183,9 +183,9 @@ $$
  	- also need a way to recognize a cache block does not have valid information
   		- the most common method is to add a *valid bit*, which indicates whether an entry contains a valid address
    			- if it's not set, it doesn't
-![[Pasted image 20260402212101.png]]
+![[screenshots/Pasted image 20260402212101.png]]
 
-![[Pasted image 20260402212113.png]]
+![[screenshots/Pasted image 20260402212113.png]]
 
 - in general, handling reads is easier for a cache than handling writes
  	- reads do not change the contents of the cache
@@ -195,9 +195,9 @@ $$
 #### Accessing a cache
 
 - given this cache
-![[Pasted image 20260402212433.png]]
+![[screenshots/Pasted image 20260402212433.png]]
 - here is how some scenarios would be handling trying to find things in it
-![[Pasted image 20260402212502.png]]
+![[screenshots/Pasted image 20260402212502.png]]
 - a referenced address can be divided into:
  	- a *tag field*, which is used to compare with the value of the tag field fo the cache
  	- a *cache index*, which is used to select the block
@@ -225,7 +225,7 @@ $$
 
 - this is the actual size in bits, but the naming convention is to exclude the size of the tag and valid field and only count the size of the data
  	- the cache in the below image is referrred to as a 4 KiB cache
-![[Pasted image 20260403112500.png]]
+![[screenshots/Pasted image 20260403112500.png]]
 
 ## Questions
 >
@@ -271,7 +271,7 @@ $$
    			- blocks become bumped out of the cache before many of its words are accessed
 - spatial locality among words in the block decreases with a very large block
  	- the benefits in miss rate decrease
-![[Pasted image 20260403114534.png]]
+![[screenshots/Pasted image 20260403114534.png]]
 
 - a serious problem associated with just increasing the block size is the cost of a miss increases
  	- the miss penalty is determined by the time required to fetch the block from the lower level of the hierarchy and load it into the cache
@@ -371,9 +371,9 @@ $$
 		- when the memory returns with the data, we write it into the cache and read it
 - FastMATH offers both write-through and write-back for writes
 	- the OS decides which one to use for an application
-![[Pasted image 20260403133329.png]]
+![[screenshots/Pasted image 20260403133329.png]]
 
-![[Pasted image 20260403133411.png]]
+![[screenshots/Pasted image 20260403133411.png]]
 - *split cache*
 	- a scheme in which a level of the memory hierarchy is comprised of two independent caches that operate in parallel with each other; one handles instructions and the other handles data
 - a combined cache with a total size equal to the sum of two split caches will usually have a better hit rate
@@ -455,7 +455,7 @@ $$
 \text{AMAT} = \text{Time for a hit} + \text{Miss rate} + \text{Miss penalty}
 $$
 $$
-= 1 + 0.05 * 20*
+= 1 + 0.05 * 20
 $$
 $$
 =2 \text{ clock cycles}
@@ -481,7 +481,7 @@ or  2 ns
 					- each block maps to a unique set in the cache, and a block can be placed in any element of that set
 					- thus, a set-associative cache combines direct-mapped and fully-associative placement
 						- a block is placed into a set and then all blocks in the set are searched for a match
-![[Pasted image 20260403141914.png]]
+![[screenshots/Pasted image 20260403141914.png]]
 
 - in a direct mapped cache, the position of a memory block is given by:
 $$
@@ -492,37 +492,37 @@ $$
 (\text{Block number})\ \%\ (\text{Number of sets in the cache})
 $$
 - we can consider all block placement strategies as a variation on set associativity
-![[Pasted image 20260403142144.png]]
+![[screenshots/Pasted image 20260403142144.png]]
 
 ##### Misses and Associativity in Caches
 >Assume there are three small caches, each consisting of four one-word blocks. One cache is fully associative, a second is two-way set asssociative, and the third is direct mapped. Find the number of misses for each cache organization given the following sequence of block addresses: 0, 8, 0, 6, and 8
 
 - the direct mapped case is easiest
 	- let's determine where each block address will be mapped in the cache
-![[Pasted image 20260403142500.png]]
+![[screenshots/Pasted image 20260403142500.png]]
 - we can fill in the cache contents after each reference
 	- we will use a blank entry to mean the block is invalid, colored text will show a new entry added to the cache for the associated reference, and plain text to show an old entry in the cache
-![[Pasted image 20260403142546.png]]
+![[screenshots/Pasted image 20260403142546.png]]
 - the direct mapped cache generates 5 misses for the 5 accesses
 - the set-associative cache has two sets (with indices 1 and 0) with two elements per set.
 	- first we determine where each block address maps
-![[Pasted image 20260403142830.png]]
+![[screenshots/Pasted image 20260403142830.png]]
 - because we have a choice of which entry in a set to replace on a miss, we need a replacement rule
 	- set-associative caches generally replace the least recently used block within a set
 		- the block that was used furthest in the past is replaced
 		- under this rule, the contents of the cache after each reference will look like this:
-![[Pasted image 20260403142937.png]]
+![[screenshots/Pasted image 20260403142937.png]]
 - note: when block 6 is referenced, it replaces block 8 since block 8 has been least recently referenced than block 0
 - the two-way set-associative cache has 4 misses, one less than the direct mapped cache
 - the fully associative cache has 4 cache blocks in a single set
 	- any memory block can be stored in any cache block
 	- the fully associative cache has the best performance, with three total misses, as so:
-![[Pasted image 20260403143059.png]]
+![[screenshots/Pasted image 20260403143059.png]]
 
 - for this series of references, three misses is optimal behavior, as three unique block addresses are accessed
 	- if we had 8 blocks in the cache, there would be no replacements for the two-way set-associative cache, and it would have the same number of misses as the fully associative cache
 - how much of a reduction in miss rate is achieved by associativity?
-![[Pasted image 20260403143228.png]]
+![[screenshots/Pasted image 20260403143228.png]]
 
 ### Locating a Block in the Cache
 - consider a set associative cache
@@ -531,7 +531,7 @@ $$
 		- the index value is used to select the set containing the address
 			- once selected, every tag within the set must be searched
 				- they are searched in parallel as sequential search would be too slow
-![[Pasted image 20260403143345.png]]
+![[screenshots/Pasted image 20260403143345.png]]
 - if total cache size is kept constant, increasing associativity increases the number of blocks per set
 	- the numer of simultaneous compares needed to perform the search in parallel
 		- each increase in associativity by a factor of 2 doubles the number of blocks per set
@@ -546,7 +546,7 @@ $$
 		- along with a 4-to-1 multiplexor to choose among the four potential members of the selected set
 		- cache access consists of indexing the appropriate set and then searching the tags of the set
 		- the costs of an associative cache are extra comparators and any delay imposed by having to do the compare and select from among elements of the set
-![[Pasted image 20260403143933.png]]
+![[screenshots/Pasted image 20260403143933.png]]
 - choosing between direct-mapped, set-associative or fully associative mapping in a memory hierarchy depends on the costs of a miss versus the cost of implementing associativity
 	- both in time and extra hardware
 - *Content Addressable Memory(CAM)* is a circuit that combines comparison and storage in a single device
@@ -631,7 +631,7 @@ $$
 				- a larger total size corresponds to a larger block size than is appropriate with a single level cache
 				- will often use higher associativity
 					- the focus is on reducing miss rates
-![[Pasted image 20260403154422.png]]
+![[screenshots/Pasted image 20260403154422.png]]
 
 ### Software Optimization via Blocking
 - many software optimizations were invented that can dramatically improve performance by reusing data within the cache and lower miss rates with improved temporal locality
@@ -653,7 +653,7 @@ C[i+j*n] = cij; /* C[i][j] = cij */
 }
 ```
 - it reads all $N$ by $N$ elements of $B$, reads the same $N$ elements that correspond to one row of $A$ repeatedly and writes what corresponds to one row of $N$ elements of $C$
-![[Pasted image 20260403155204.png]]
+![[screenshots/Pasted image 20260403155204.png]]
 - this gives us a snapshot of the three arrays
 	- a dark shade is a recent access, a light shade is an older access, and white means not yet accessed
 - the number of capacity misses depends on $N$ and the size of the cache
@@ -698,11 +698,11 @@ void dgemm (int n, double* A, double* B, double* C)
 ```
 
 - access age to the array is as follows:
-![[Pasted image 20260403160210.png]]
+![[screenshots/Pasted image 20260403160210.png]]
 - as we can see, there are fewer accesses to the arrays overall
 - while blocking is intended to reduce cache misses, it can also be used to help register allocation
 	- by taking a small blocking size such that the block can be held in registers, we can minimize the number of loads and stores in the program, which improves performance
-![[Pasted image 20260403160321.png]]
+![[screenshots/Pasted image 20260403160321.png]]
 - multilevel caches create several complications
 	- there are now several different types of misses, each with its own corresponding miss rate
 		- *global miss rate* - the fraction of references that miss in all levels of a multilevel cache
@@ -785,7 +785,7 @@ $$
 				- each data bit is checked by two or more parity bits
 		- finally, we set parity bits to create even for each group
 			- this will let us determine which bits are correct and incorrect by using the parity bits
-![[Pasted image 20260403163334.png]]
+![[screenshots/Pasted image 20260403163334.png]]
 - this does not just apply to single-bit errors
 	- for the cost of one bit, we can also detect double bit errors with a minimum Hamming distance of 4
 - Single Error Correcting/Double Error Detecting (SEC/DED) is common in memory for servers today
@@ -810,3 +810,9 @@ so $p=4
 - $p=6$ for 32 bits of data
 - $p=7$ for 64 bits
 - and so on
+
+
+
+11111
+
+ADB

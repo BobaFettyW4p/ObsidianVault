@@ -68,6 +68,7 @@ a rough order of magnitude of comparison:
 		- compute nodes are separated into partitions, which denotes the type of hardware
 	- `caslake` is the largest and is the standard hardware to request
 - `sinteractive --account=mpcs52018 --partition=caslake --time==00:20:00`
+	- `TERM=xterm-256color sinteractive --account=mpcs52018 --partition=caslake --time=00:00:10`
 	- requests an interactive session
 	- specifies the account, partition, and time requested for
 - `lscpu`
@@ -100,3 +101,87 @@ a rough order of magnitude of comparison:
 - decreasomg base CPI means you spend a greater proportion of time on memory stalls
 - increasing clock rate means memory stalls account for more CPU cycles
 - can't neglect cache behavior when evaluating system performance
+
+### Cache Example Problem
+>For a direct mapped cache design with a 32-bit address, the following bits of the addressed are used to access the cache
+>Tag: 31-10
+>Index: 9-5
+>Offset: 4-0
+
+>What is the cache block size (in words)?
+
+- assuming it's a byte-addressable cache
+	- cache block is given by number of offset bits
+$$
+5 \text{ total offset bits} = 2^5 \text{ bytes} = 32 \text{ bytes} = 8 \text{ words}
+$$
+- this assumes 4 bytes per word
+	- which is what the book assumes
+
+> How many entries does the cache have?
+
+- we can tell this from the cache index
+
+$$
+5 \text{ index bits} = 2^5 = 32 \text{ bytes per cache line}  
+$$
+
+- this means there are $2^5 * 2^5$ total bytes of storage in the cache, which equals $2^{10} = 2 \text{ kibibytes}$ of data in the cache
+
+>What is the ratio between total bits required for such a cache implementation over the data storage bits?
+
+- the data storage bits = $2^{10}$ bytes = $8*2^{10}$ bits
+- the cache will have 32 entries, each with a tag that must be stored
+	- can't get around it
+	- tag has 22 bits
+		- $22 \text{ bits} * 32 \text{ slots} + 32 \text{ total valid bits} + 8*2^{10}$ is the total numbe rof bits for the cache
+		- total number of bits for data: $8*2^{10}$
+		- $\therefore,$
+$$
+\frac{22*32+32+8*2^{10}}{8*2^{10}} = 1.6875
+$$
+
+### Cache Example Problem 2
+>Starting from power on, the following byte-addressed cache references are recorded
+
+0
+4
+16
+132
+232
+160
+1024
+30
+140
+3100
+180
+2180
+
+> How many blocks are replaced?
+
+- for each address, specify what cache line the address resides in, what is the offset, what is the memory, is it a hit?
+	- address 0
+		- look at 5 lower order bits
+			- best way is to write it in binary
+			- $0$ is $00000$
+				- block will be 0, offset will be 0, mem will be `<0..31>`, it is not a miss
+			- $4$ is $00100$
+				- block will be 0, offset will be 4, mem will be `<0..31>`, it is a hit
+					- hit because it was already loaded into cache
+			- $16$ will be $100000$
+				- block will be 0, offset will be 16, mem will be `<0..31>`, it is a hit
+			- $132$ will be $10000100$
+				- block will be 4, offset will be 4, mem will be `<128..159>`,  it is a miss
+			- $232$ will be $11101000$
+				- block will 7, offset will be 8, mem will be `<224.255>`, it is a miss
+
+>What is the hit ratio?
+
+-for the examples we did, since there were 5 entries, and 2 of them were hits, we would have a hit ratio of 2/5
+
+>List the final state of the cache, with each valid entry represented as a record of `<index,tag,data>`
+
+the final state would be 
+
+- `<0, 0, 0>`, `<0, 4, 4`, `<0, 16, 16>`, `<4, 4, 132>`, `<7, 8, 232>`
+

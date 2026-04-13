@@ -1,0 +1,11 @@
+- 4 topics to cover
+	- associative caches
+	- multilevel caches
+		- write-back and write-through caches
+	- membench benchmarks
+		- how fast can data be streamed from RAM through a processor?
+		- stream is alternative, but prof prefers membench
+- *fma* - fused multiply add
+
+- assignment: get as close to 96 GFLOPs as possible
+	- set minimum bar of 40 GFLOPs
