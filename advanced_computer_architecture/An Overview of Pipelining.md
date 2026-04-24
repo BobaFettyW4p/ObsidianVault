@@ -14,4 +14,117 @@
 	- access an operand in data memory
 	- write the result into a register
 ### Single cycle vs pipelined performance
-- all pipeline stages take a singel cycle
+- all pipeline stages take a single cycle
+
+- it is possible to turn the pipelining speed-up discussion into a formula
+	- if the stages are perfectly balanced, then the time between instructions is equal to:
+$$
+\text{Time between instructions}_{pipelined} = \frac{\text{Time between instructions}_{nonpipelined}}{\text{Number of pipe stages}}
+$$
+- under ideal conditions and with a large number of instructions, the speed up from pipelining is approximately equal to the number of pipe stages
+	- a five stage pipeline is nearly 5x fatser
+	- in practice, this is generally not possible - stages may not be perfectly balanced
+		- the actual practice of pipelining introduces some overhead
+![[Pasted image 20260422210521.png]]
+
+![[Pasted image 20260422210551.png]]
+
+ - as our example proves, this is not always true
+	 - our example should have a 4x speedup, but it's $2400/1400 = 1.7x$
+	- at least partially because the number of instructions was not large
+- consider an option where we add 1,000,000 instructions
+	- tin the pipelined example, each instruction adds 200 ps to the execution time
+		- gives us a pipelined execution time of $1,000,000 * 200 + 1400 = 200,001,400$
+		- adding the same instructions to the non-pipelined gives us $1,000,000 * 800 + 2400 = 8,002,400$
+		- Thus:
+$$
+\frac{800,002,400}{200,001,400} = \frac{800}{200} = 4.00
+$$
+#### Designing Instruction Sets for Pipelining
+- all MIPS instructions are the same length
+	- makes it much easier to fetch instructions in the first pipeling stage and decode them in the second stage
+		- in x86, instructions vary from 1-15 bytes, which makes pipelining significantly more challenging
+			- recent implementations actually translate x86 instructions into simple operations that look like MIPS instructions and then pipeline them
+- MIPS has only a few instruction formats
+	- source register fields are located in the same place in each instruction
+		- the second stage can begin reading the register file at the same time that the hardware is determining what kind of hardware is fetched
+			- if they weren't , stage 2 would need to be split, necessitating more pipeline stages
+- memory operands only appear in loads or stores in MIPS
+	- we can use the execute stage to calculate the memory address and then access memory in the following stage
+- operands must be aligned in memory
+	- we don't have to worry about a single data transfer instruction requiring two data memory accesses
+		- the requested data can be transferred between processor and memory in a single pipeline stage
+### Pipeline Hazards
+- there are situations in pipelines where the next instruction cannot execute in the next clock cycle
+	- these are called *hazards*
+- *structural hazard*
+	- in a structural hazard, the hardware cannot support the combination of instructions that we want to execute in the same clock cycle
+	- the hardware cannot support the combination of instructions we want to execute in the same clock cycle
+	- as the MIPS instruction set was designed to be pipelined, it is fairly easy for designers to avoid structural hazards when designing a pipeline
+- *data hazards*
+	- data hazards occur when the pipeline must be stalled as one step must wait for another to complete
+		- generally arise with the dependence of one instruction on an earlier one that is still in the pipeline
+		- suppose we have an add instruction followed immediately by a subtract instruction that uses the sum:
+```
+add $s0, $t0, $t1
+sub $t2, $s0, $t3
+```
+- the add instruciton doesn't write the result until the fifth stage
+	- so the second subtract instruction won't apply until three cycles later
+	- the compilers may be able to fix this to an extent, but the result will not be satisfactory
+- the primary solution is based on the idea that we don't need to wait for the instruction to complete before trying to resolve the data hazard
+	- as soon as the ALU creates the sum for the add, we can supply it as an input for the subtract
+- adding extra hardware to retrieve the missing item early from internal resources is called *forwarding* or *bypassing*
+
+#### Forwarding with Two Instructions
+- for the two instructions above, the datapath using the five stages of the pipeline is as follows:
+![[Pasted image 20260423194757.png]]
+
+- the connection to forward the value in $\texttt{s0}$ after the execution stage o the add instruction as input to the execution stage of the $\texttt{sub}$ instruction
+
+![[Pasted image 20260423195154.png]]
+
+- forwarding paths are only valid if the destination stage is later in time than the source stage
+	- e.g. there cannot be a valid forwarding path from the output of the memory access stage in the first instruction to the input of the execution stage
+		- that would mean going back in time
+- forwarding works well, but cannot prevent all pipeline stalls
+- a pipeline stall initiated to resolve a hazard is called a *pipeline stall* or *bubble*
+
+#### Example
+- consider the following code segment
+```
+a = b + e;
+c = b + f;
+```
+- the generated MIPS code, assuming all variables are in memory and are addressable as offsets from $\texttt{\$t0}$:
+```
+lw    $t1, 0($t0)
+lw    $t2, 4($t0)
+add   $t4, $t1, $t2
+sw    $t3, l2($t0)
+lw    $t4, 8($t0)
+add   $t5, $t1, $t4
+sw    $t5, l6($t0)
+```
+
+- both $\texttt{add}$ instructions have a hazard because of their respective dependence on the preceding $\texttt{lw}$ instruction
+	- bypassing also eliminates several other potential hazards
+		- the dependence of the first $\texttt{add}$ on the first $\texttt{lw}$
+		- any hazards for store instructions
+		- this resolution eliminates both:
+```
+lw    $t1, 0($t0)
+lw    $t2, 4($t0)
+lw    $t4, 8($t0)
+add   $t4, $t1, $t2
+sw    $t3, l2($t0)
+add   $t5, $t1, $t4
+sw    $t5, l6($t0)
+```
+
+- each MIPS instruction writes at most one result and does this in the last stage of the pipeline
+	- forwarding is harder if there are multiple results to forward per instruction
+		- or if there is a need to write a result early on in instruction execution
+- *control hazard*
+	- arises from the need to make a decision based on the results of one instruction while others are executing
+	- when the proper instruction cannot execute in the proper pipeline clock cycle because the instruction that was fetched

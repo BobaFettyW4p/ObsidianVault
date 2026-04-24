@@ -1,0 +1,27 @@
+- when you get a new computer, you run software to verify performance before you accept the computer
+	- STREAM
+	- Limpack
+		- community is tired of one number specific for one set of things
+- loop fusion, loop fission, register variables, etc.
+	- not just the compiler that has levelled the playing field, it's hardware too
+- minimum weight, perfect match
+	- $O(n^3)$ graph problem
+		- used to correct quantum computing
+- loop unrolling
+# Virtual Memory
+- `malloc` an array much larger than your RAM
+	- check the value of a pointer that gets returned
+		- does the program crash? is the pointer null?
+			- it will work?
+				- may be a little disturbing, the program is offering you a pointer to a block of memory that doesn't exist
+				- lazy initializaton
+					- the memory is only created in real memory when it's needed
+						- if it's needed, you'll have a problem
+- when using virtual addressing, the processor receives a proxy address that must be translated into a physical address
+	- used in all modern desktops and servers, not necessarily on HPC machines
+- address translation
+	- key idea of virtual memory: each proecss has its own virtual address space
+- granularity of mapping?
+	- need to translate each virtual address to physical address
+	- table would be huge, this is done in contiguous chunks called pages
+- slides through VIPT cache are fair game for the quiz
