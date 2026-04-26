@@ -128,3 +128,54 @@ sw    $t5, l6($t0)
 - *control hazard*
 	- arises from the need to make a decision based on the results of one instruction while others are executing
 	- when the proper instruction cannot execute in the proper pipeline clock cycle because the instruction that was fetched
+	- consider a branch instruction
+		- we must begin fetching the instruction following the branch on the next clock cycle
+			- however, the pipeline cannot know what the next instruction should be since it only just received the branch instruction
+			- one solution is to stall immediately after we fetch a branch instruction until the processor knows what to do with it
+			- we can put in extra hardware to test registers, calculate the branch address, and update the PC during the second stage of the pipeline
+				- if we do this, the pipeline will look like this:
+![[Pasted image 20260424172128.png]]
+- the $\texttt{lw}$ instruction, which is only executed if the branch fails, is delayed 200 ps before starting
+##### Performance of "Stall on Branch"
+> Estimate the impact on the clock cycles per instruction (CPI) of stalling on branches. Assume all other instructions have a CPI of 1
+
+- branches are 17% of the instructions
+	- since other instructions have a CPI of 1, and branches take one additional clock cycle, we see a CPI of 1.17, hence: $\frac{1.17}{1} = 1.17$
+- if we cannot resolve the branch in the second stage (this is often the case for longer pipelines), then we'd see an even large slowdown if we stall on branches
+	- this option costs too much for most computers
+		- motivates a second solution to the control hazard:
+			- if you're pretty sure you have the right formula, just predict that it will work and proceed while waiting for the calculation to complete
+				- does not slow down the pipeline when you are correct
+					- when you are wrong, you need to redo the calculations
+- computers do indeed use prediction to handle branches
+	- a simple approach is to predict that branches will always be untaken
+![[Pasted image 20260424173253.png]]
+- a more sophisticated version of *branch prediction* will have some branches predicted as taken and some as untaken
+	- branches that are the end of loops may always be predicted to be taken, as we know loops will iterate many times and only terminate once
+- this approach does not provide for the individuality of a specific branch instruction
+	- dynamic hardware predictors guess based on the behavior of each branch and may change predictions over the course of a program
+		- one approach is to keep a history of each branch as taken or untaken, and then using past behavior to predict the future
+			- this can lead to over 90% accuracy
+			- when the guess is wrong, the pipeline control must ensure the instructions for the wrongly guessed branch have no effect and the pipeline must restart from the correct branch
+		- a third approach is called *delayed decision*
+			- the solution actually used by MIPS
+			- the processor processes the next sequential instruction, with the branch occurring after one instruction delay
+				- MIPS places an instruction immediately after the delayed branch instruction so its not affected by the branch, and then a taken branch changes the address of the instruction that follows this instruction
+### Pipeline Overview Summary
+- pipelining is a technique that exploits *parallelism* among instructions in a sequential instruction stream
+	- it has the advantage that it is fundamentally invisible to the programmer
+- outside of the memory system, the effective operation of the pipeline is the most important factor in determining the CPI of the processor, and hence processor performance
+- understanding the performance of a modern multiple-issued pipelined processor is complex and requires understanding more than just the issues that arise in a simple pipelined processor
+	- structural, data, and control hazards remain important in both simple pipelines and more sophisticated ones
+- in modern pipelines, structural hazards usually resolve around the floating-point unit, which may not be fully pipelined
+	- control hazards are more of a problem in integer programs
+		- tend to have higher branch frequencies as well as less predictable branches
+	- data hazards can be performance bottlenecks in both integer and floating-point programs
+	- it is generally easier to deal with data hazards in floating point programs because the lower branch frequency and more regular memory access patterns allow the compiler to schedule instructions to avoid hazards
+		- it is more difficult to perform optimizations in integer programs that have less regular memory access
+			- more use of pointers
+- Pipelining increases the number of simultaneously executing instructions and the rate at which instructions are started and completed
+	- pipelining does the reduce the time it takes to execute an individual instruction
+		- pipelining improves instruction throughput rather than individual instruction execution time or latency
+- instruction sets can either simplify or make life harder for pipeline designers, who must cope with structural, control, and data hazards
+	- branch prediction and forwarding help make a computer fast while still getting the right answers
