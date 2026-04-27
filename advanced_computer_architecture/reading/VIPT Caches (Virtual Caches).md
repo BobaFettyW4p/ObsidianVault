@@ -16,16 +16,16 @@
 ### Practice Problem
 >Given a simple 4 entry TLB:
 
-![[Pasted image 20260419134125.png]]
+![[screenshots/Pasted image 20260419134125.png]]
 
 - the TLB is fully associative
 - pages are 4 KiB
 - we will use the LRU policy for evictions
 - here is the page table in memory:
-![[Pasted image 20260419134228.png]]
+![[screenshots/Pasted image 20260419134228.png]]
 
-![[Pasted image 20260419134330.png]]
+![[screenshots/Pasted image 20260419134330.png]]
 
-![[Pasted image 20260419134610.png]]
+![[screenshots/Pasted image 20260419134610.png]]
 
-![[Pasted image 20260419134747.png]]
+![[screenshots/Pasted image 20260419134747.png]]

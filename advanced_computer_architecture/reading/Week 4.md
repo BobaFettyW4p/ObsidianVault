@@ -36,7 +36,7 @@
 		- *virtual address* - an address that corresponds to a location in virtual space and is translated by address mapping to a physical address when memory is accessed
 			- a physical address can be used to access main memory
 				- this process is called *address mapping* or *address translation*
-![[Pasted image 20260414210259.png]]
+![[screenshots/Pasted image 20260414210259.png]]
 - today, the two memory hierarchy levels controlled by virtual memory and typically DRAMs and flash memory in mobile devices and DRAMs and magnetic disks in servers
 - virtual memory simplifies loading the program for execution by providing *relocation*
 	- *relocation* maps the virtual addresses used by a program to different physical addresses before the addresses are used to load the program in main memory
@@ -49,7 +49,7 @@
 	- the number of bits in the page offset field indicates the page size
 		- the number of pages addressable with the virtual address need not match the number of pages addressable with the physical address
 			- having a larger number of virtual pages than physical pages is the basis for the illusion of essentially unbounded amounts of virtual memory
-![[Pasted image 20260414210644.png]]
+![[screenshots/Pasted image 20260414210644.png]]
 
 - many design changes in virtual memory systems are motivated by the high cost of a page fault
 	- a page fault to disk can take millions of clock cycles to process
@@ -99,7 +99,7 @@
 					- the program counter will initiate execution at the value of the saved program coutner
 - the processor's address space (and thus, all the data it can access in memory) is defined by its page table
 	- as opposed to loading the netire page table, the OS can load the page table register to the page table of the process it wants to activate
-![[Pasted image 20260415052533.png]]
+![[screenshots/Pasted image 20260415052533.png]]
 ### Page Faults
 - if the valid bit for a virtual page is off, a page fault occurs
 	- the OS must be given control, and the transfer is done with the exception mechanism
@@ -113,7 +113,7 @@
 - the OS also creates a data structure that tracks with processes and which virtual addresses use each physical page
 	- when a page fault occurs, if all the pages in main memory are in use, the OS must choose a page to replace
 		- in order to minimize the number of page faults, most OSes will utilize LRU
-![[Pasted image 20260415054509.png]]
+![[screenshots/Pasted image 20260415054509.png]]
 
 - a completely accurate LRU scheme is too expensive
 	- requires updating a data structure on every single memory reference
@@ -183,7 +183,7 @@ $$
 	- thus, modern processors include a special cache that tracks recently used translations 
 		- traditionally referred to as the *translation-lookaside buffer (TLB)*
 			- more accurate to call it as translation cache
-![[Pasted image 20260415192704.png]]
+![[screenshots/Pasted image 20260415192704.png]]
 
 - each tag entry in the TLB holds a portion of the virtual page number, and each data entry of the TLB holds a physical page number
 	- as we access the TLB instead of the page table, we need to incldue other status bits
@@ -236,12 +236,12 @@ $$
 	- similarly, the OS modifies the page tables and TLB, so an attempt to access any data on the migrated page will generate a page fault
 - under ideal circumstances, a virtual address is translated by the TLB and sent to the cache where the appropriate data is found, retreived and sent back to the processor
 - in the worst case, a reference can miss in all 3 components: TLB, page table, and cache
-![[Pasted image 20260415210852.png]]
+![[screenshots/Pasted image 20260415210852.png]]
 
 - in a memory hierarchy like the above, a memory reference can encounter three different types of misses: a TLB miss, a page fault, and a cache miss
-![[Pasted image 20260415211010.png]]
+![[screenshots/Pasted image 20260415211010.png]]
 
-![[Pasted image 20260415210908.png]]
+![[screenshots/Pasted image 20260415210908.png]]
 
 - figure 5.32 assumes all memory addresses are translated to physical addresses before the cache is accessed
 	- the cache is *physically indexed and physically tagged*
@@ -306,7 +306,7 @@ $$
 		- if it's dirty, it must be written to disk first
 	- start a read to bring the referenced page from disk into the chosen physical page
 		- will take millions of clock cycles
-![[Pasted image 20260415215626.png]]
+![[screenshots/Pasted image 20260415215626.png]]
 
 - when the read of the page from disk is complete, the OS can restore the state of the process that initially caused the page fault and execute the instruction that returns from the exception
 	- the process will re-execute the instruction that faulted, access the requested page successfully, then continue execution
@@ -321,7 +321,7 @@ $$
 	- the exception invokes the OS, which handles the miss in software
 		- control is transferred to the miss *handler*, which is responsible for handling exceptions and interrupts
 	- MIPS also has a special set of instructions to update the TLB
-![[Pasted image 20260415220242.png]]
+![[screenshots/Pasted image 20260415220242.png]]
 
-![[Pasted image 20260415220304.png]]
+![[screenshots/Pasted image 20260415220304.png]]
 

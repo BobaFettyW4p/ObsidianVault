@@ -2,7 +2,7 @@
 	- all calculations are independent, none of them use the results from prior calculations
 		- leads to a data hazard
 			- obstacle to pipelined execution
-![[Pasted image 20260425161658.png]]
+![[screenshots/Pasted image 20260425161658.png]]
 
 - consider the following sequence with many dependencies:
 ```
@@ -16,7 +16,7 @@ sw     $15, 100($2)  # Base ($2) depends on sub
 - the last 4 instructions are all dependent on the result in register $\texttt{\$2}$ of the first instruction
 	- if register $\texttt{\$2}$ had the value $10$ before the subtract instruction and $-20$ afterwards, the programmer intends that $-20$ will be used in the following instructions that refer to register $\texttt{\$2}$
 - this diagram shows how these instructions would operate in the pipeline:
-![[Pasted image 20260425162034.png]]
+![[screenshots/Pasted image 20260425162034.png]]
 - the top shows the value of register $\texttt{\$2}$ as the pipeline proceeds
 	- it changes during pipe cycle 5, when the $\texttt{sub}$ instruction writes its result
 - the last potential hazard can be resolved by the design of the register file hardware
@@ -60,16 +60,16 @@ sw     $15, 100($2)  # Base ($2) depends on sub
 	- one solution is to check if the RegWrite signal will be active
 		- examining the WB control field determines whether it will be asserted
 - once we are able to detect hazards, we still have to forward the proper data
-![[Pasted image 20260425170612.png]]
+![[screenshots/Pasted image 20260425170612.png]]
 - this diagram shows the dependence between pipeline registers and the inputs to the ALU
 	- the dependence begins from a pipeline register, as opposed to waiting for the WB stage to write the register file
 		- the required data exists in time for later instructions
 			- the pipeline registers hold the data to be forwarded
-![[Pasted image 20260425171710.png]]
+![[screenshots/Pasted image 20260425171710.png]]
 
-![[Pasted image 20260425171726.png]]
+![[screenshots/Pasted image 20260425171726.png]]
 - the EX/MEM.RegisterRd field is the register destination for an ALU instruction or a load
-![[Pasted image 20260425180853.png]]
+![[screenshots/Pasted image 20260425180853.png]]
 
 - forwarding can also help with hazards when store instructions are dependent on other instructions
 	- if they use just one data value during MEM, forwarding is easy
@@ -77,7 +77,7 @@ sw     $15, 100($2)  # Base ($2) depends on sub
 		- due to frequent copies
 ### Data Hazards and Stalls
 - one case where forwarding cannot save the day is when an instruction tries to read a register following a load instruction that writes the same register
-![[Pasted image 20260425183510.png]]
+![[screenshots/Pasted image 20260425183510.png]]
 - consider the above
 	- the data is still being read from memory in clock cycle 4 while the ALU is performing the operation for the following instruction
 		- something has to stall the pipeline for the combination of load followed by an instruction that reads its result

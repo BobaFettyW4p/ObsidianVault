@@ -17,11 +17,11 @@
 	- direct mapped, 2-way set associative, fully associative
 - block access sequence: 0,8,0,6,8
 - Direct mapped
-![[Pasted image 20260408195833.png]]
+![[screenshots/Pasted image 20260408195833.png]]
 - 2-way set associative
-![[Pasted image 20260408195952.png]]
+![[screenshots/Pasted image 20260408195952.png]]
 - fully associative
-![[Pasted image 20260408200006.png]]
+![[screenshots/Pasted image 20260408200006.png]]
 - a *compulsory miss* is a reference to a cache that has never been touched before
 	- nothing has been loaded into the cache yet
 		- it's impossible for there to be a hit

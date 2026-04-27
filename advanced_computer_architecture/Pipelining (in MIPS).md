@@ -1,1 +1,0 @@
-- chapter this week is on instruction-level parallelism

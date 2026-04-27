@@ -1,6 +1,6 @@
 - *pipelining* - an implementation technique where multiple techniques are overlapped in execution
 	- today, pipelining is nearly universal
-![[Pasted image 20260421204621.png]]
+![[screenshots/Pasted image 20260421204621.png]]
 
 - the pipelining paradox is that the time from placing a single dirty sock in the washer until it is cleaned, dried, folded, and put away is not shortened by pipelining
 	- pipelining is faster for many loads as everything works together in parallel
@@ -25,9 +25,9 @@ $$
 	- a five stage pipeline is nearly 5x fatser
 	- in practice, this is generally not possible - stages may not be perfectly balanced
 		- the actual practice of pipelining introduces some overhead
-![[Pasted image 20260422210521.png]]
+![[screenshots/Pasted image 20260422210521.png]]
 
-![[Pasted image 20260422210551.png]]
+![[screenshots/Pasted image 20260422210551.png]]
 
  - as our example proves, this is not always true
 	 - our example should have a 4x speedup, but it's $2400/1400 = 1.7x$
@@ -78,11 +78,11 @@ sub $t2, $s0, $t3
 
 #### Forwarding with Two Instructions
 - for the two instructions above, the datapath using the five stages of the pipeline is as follows:
-![[Pasted image 20260423194757.png]]
+![[screenshots/Pasted image 20260423194757.png]]
 
 - the connection to forward the value in $\texttt{s0}$ after the execution stage o the add instruction as input to the execution stage of the $\texttt{sub}$ instruction
 
-![[Pasted image 20260423195154.png]]
+![[screenshots/Pasted image 20260423195154.png]]
 
 - forwarding paths are only valid if the destination stage is later in time than the source stage
 	- e.g. there cannot be a valid forwarding path from the output of the memory access stage in the first instruction to the input of the execution stage
@@ -134,7 +134,7 @@ sw    $t5, l6($t0)
 			- one solution is to stall immediately after we fetch a branch instruction until the processor knows what to do with it
 			- we can put in extra hardware to test registers, calculate the branch address, and update the PC during the second stage of the pipeline
 				- if we do this, the pipeline will look like this:
-![[Pasted image 20260424172128.png]]
+![[screenshots/Pasted image 20260424172128.png]]
 - the $\texttt{lw}$ instruction, which is only executed if the branch fails, is delayed 200 ps before starting
 ##### Performance of "Stall on Branch"
 > Estimate the impact on the clock cycles per instruction (CPI) of stalling on branches. Assume all other instructions have a CPI of 1
@@ -149,7 +149,7 @@ sw    $t5, l6($t0)
 					- when you are wrong, you need to redo the calculations
 - computers do indeed use prediction to handle branches
 	- a simple approach is to predict that branches will always be untaken
-![[Pasted image 20260424173253.png]]
+![[screenshots/Pasted image 20260424173253.png]]
 - a more sophisticated version of *branch prediction* will have some branches predicted as taken and some as untaken
 	- branches that are the end of loops may always be predicted to be taken, as we know loops will iterate many times and only terminate once
 - this approach does not provide for the individuality of a specific branch instruction
