@@ -25,3 +25,27 @@
 		- the major drawback is limited in its ability to overcome throughput losses, especially from shorter stalls
 			- this limitation arises from the pipeline start-up costs of coarse-grained multithreading
 			- because a processor with coarse-grained multithreading issues instructions from a single thread, so when a stall occurs, the pipeline must either be emptied or frozen
+				- the new thread needs to fill the pipeline before instructions start to complete
+					- this overhead means coarse-grained multithreading is much more useful for reducing the penalty of high-cost stalls
+- *simultaneous multithreading (SMT)* is a variation on hardware multithreading that uses the resources of a multiple-issue, dynamically scheduled pipelined processor to exploit thread-level parallelism at the same time it exploits instruction-level parallelism
+	- key insight: multiple-issues processors often have more functional unit parallelism available than most single threads can effectively use
+		- with register renaming and dynamic scheduling, multiple instructions from independent threads can be issued without regard to the dependencies among them
+			- the dynamic scheduling capability handles resolution of these dependencies
+	- as SMT relies on existing dynamic mechanisms, it doesn't switch resources every cycle
+		- SMT is always executing instructions from multiple thrads
+			- it's up tot he hardware to associate instruction slots and renamed registers with proper threads
+![[Pasted image 20260510082828.png]]
+- the top portion shows how four threads would execute independently with no multithreading support
+- the bottom portion shows how the fourt hreads could be combined to execute on the processor using three multithreading options
+	- a superscalar with coarse-grained multithreading
+	- a superscalar with fine-grained multithreading
+	- a superscalar with simultaneous multithreading
+- a superscalar processor without hardware multithreading support is limited by a lack of instruction-level parallelism
+	- a major stall (i.e. an instruction cache miss) will leave the entire processor idel
+- in coarse-grained multithreading, long stalls are partially hidden by switching to another thread that uses the resources of the processor
+	- this reduces the number of totally idle cycles, but pipeline start-up overhead will still lead to idle cycle
+		- all issue slots will not be used
+- in fine-grained multithreading, interleaving of threads mostly eliminates empty clck cycle
+	- as only a single thread issues instructions in a given clock cycle, there are still idle slots in some clock cycles
+- in the SMT case, thread-level parallelism and instruction-level parallelism are both exploited to minimize the number of empty cycles
+	- multiple threads use the issue slots in a single clock cycle
