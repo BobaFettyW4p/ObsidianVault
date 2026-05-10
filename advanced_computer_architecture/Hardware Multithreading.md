@@ -1,0 +1,27 @@
+- *hardware multithreading*, increasing utilization of a processor by switching to another thread when one thread is stalled
+	- related to MIMD, especailly from the programmer's perspective
+	- while MIMD relies on multiples processes or threads to keep multiple processors busy, hardware multithreading allows multiple threads to share the functional units of a single processor in an overlapping fashion to utilize harware resource efficiently
+		- *thread* - a thread includes the program counter, the register state, and the stack. It is a lightweight process; whereas threads share a single address space, processes don't
+		- *process* - a process includes one or more threads, the address, and the operating system state. Hence, a process switch usually invokes the operating system, but not a thread switch
+		- ex. each thread would have a separate copy of the register file and the program counter
+- memory can be shared through virtual memory mechanisms, which already support multi-programming
+	- the hardware must also support the ability to change to a different thread relatively quickly
+		- a thread switch should be much more efficient than a process switch
+			- a process switch typically requires hundreds to thousands of cycles
+			- a thread switch can be more or less instantaneous
+- there are two main approaches to hardware multithreading
+	- *fine-grained multithreading* switches between threads on each instruction
+		- results in the interleaved execution of multiple threads
+			- this interleaving is often done in round robin fashion, skipping any stalled threads at the particular cylock cycle
+				- to make this practical, the processor must be able to switch threads for free on every clock cycle
+		- an advantage of this approach is that it can hide the throughput losses that arise from short and long stalls
+			- instructions from other threads can be executed when one thread stalls
+		- a disadvantage is that it slows down the execution of individual threads
+			- a thread that is ready to execute without stalls will be delayed by instructions from other threads
+	- *course-grained multithreading* was invented as an alternative to fine-grained multithreading
+		- switches threads only on costly stalls, such as cache misses
+			- relieves the need to have thread switching be extremely fast
+			- much less likely to slow down the execution of an individual thread
+		- the major drawback is limited in its ability to overcome throughput losses, especially from shorter stalls
+			- this limitation arises from the pipeline start-up costs of coarse-grained multithreading
+			- because a processor with coarse-grained multithreading issues instructions from a single thread, so when a stall occurs, the pipeline must either be emptied or frozen
