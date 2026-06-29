@@ -1,0 +1,19 @@
+- Outcome
+	- the result of a single trial of a random experiment
+		- single observation that does not need to be further decomposed
+	- the most basic possible result of an experiment
+- Event
+	- a set of outcomes from a random experiment
+	- may consist of one outcome, multiple outcomes, or no outcomes at all
+	- a subset of the sample space
+- Key Differences
+	- Granularity
+		- an outcome is a single result of the experiment
+		- an event can include any combination of outcomes from the sample space
+	- Probability
+		- can be assigned to both outcomes and events
+			- the probability of an outcome is the likelihood of that specific result ocurring
+			- the probability of an event is the sum of the probabilities of the individual outcomes that make up that even
+	- Complexity
+		- an outcome is a simple, indivisible result
+			- an event can be more complex, including combinations such as unions, intersections, and complements of other events or outcomes

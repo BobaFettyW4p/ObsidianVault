@@ -1,0 +1,4 @@
+- some key questions are based on common theoretical underpinnings:
+	- what random process produced the given time dependent data set and can they be modeled numerically?
+	- what are the statistical properties of those processes?
+	- to what level fo certainty can we predict future values of the time series?
