@@ -33,7 +33,7 @@ $$p(\Theta, y) = \frac{p(y|\Theta)p(\Theta)}{p(y)}$$
 	- extreme market move
 	- rare engineering failure
 - naive sampling may never visit the important region
-![[Pasted image 20260624195031.png]]
+![[screenshots/Pasted image 20260624195031.png]]
 
 ### Importance Sampling: Correcting the Bias
 - Sample from a proposal distribution $q(x)$, but estimate expectations under $p(x)$
@@ -59,7 +59,7 @@ $$E_p[f(X)] \approx \frac{1}{N} \Sigma_{i=1}^N f(x_i) \frac{p(x_i)}{q(x_i)}, x_i
 	- Draw $U ~ Uniform(0,1)$
 	- Find $X$ such that $F(X) = U$
 	- Return $X = F^{-1}(U)$
-![[Pasted image 20260624200023.png]]
+![[screenshots/Pasted image 20260624200023.png]]
 
 ### Why It Works?
 
@@ -76,7 +76,7 @@ $$p(x) = e^{-x}, x>0$$
 $$F(x) = 1 - e^{-x}$$
 - So:
 $$X = F^{-1}(U) = -log(1-U)$$
-![[Pasted image 20260624200510.png]]
+![[screenshots/Pasted image 20260624200510.png]]
 
 ### Discrete Inverse Transform Sampling
 - Sample from a discrete distribution:
@@ -84,7 +84,7 @@ $$P(X=x) = 0.1\ if\ x=1, 0.2\ if\ x=2, 0.4\ if\ x=3, 0.3\ if\ x=4$$
 - Draw $U ~ Uniform(0,1)$
 	- Return the smallest $x$ such that $F(x) \geq U$
 
-![[Pasted image 20260624200639.png]]
+![[screenshots/Pasted image 20260624200639.png]]
 
 ##### Lookup Procedure
 - Draw $U ~ Uniform(0,1)$
@@ -92,7 +92,7 @@ $$P(X=x) = 0.1\ if\ x=1, 0.2\ if\ x=2, 0.4\ if\ x=3, 0.3\ if\ x=4$$
 - Find the first jump where $F(x_i) \geq U$
 - Return $x_i$
 
-![[Pasted image 20260624200805.png]]
+![[screenshots/Pasted image 20260624200805.png]]
 
 # Specialized Techniques
 - for specific distributions, techniques may exist to sample more efficiently than general approaches can
@@ -129,7 +129,7 @@ $$= \int^R_{r'=0} e^{-\frac{r'^2}{2}}rdr$$
 	- reject points above $f(x)$ and try again
 $$f(x) \leq Mg(x)$$
 
-![[Pasted image 20260624202134.png]]
+![[screenshots/Pasted image 20260624202134.png]]
 
 ##### Algorithm
 - Goal: sample a random variable $X$ from a target PDF $f(x)$

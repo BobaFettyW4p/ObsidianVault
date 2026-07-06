@@ -21,7 +21,7 @@ $$x = \text{72 inches}$$
 $$F(x) = P(X \leq x)$$
 - For a continuous random variable:
 $$F(x) = \int^x_{-\infty} f(t) dt,  f(x) = F'(x)$$
-![[Pasted image 20260623204726.png]]
+![[screenshots/Pasted image 20260623204726.png]]
 
 - Key idea:
 > The Probability Distribution Function describes local density; the Cumulative Distribution Function describes accumulated probability
@@ -30,14 +30,14 @@ $$F(x) = \int^x_{-\infty} f(t) dt,  f(x) = F'(x)$$
 
 ##### Discrete
 
-![[Pasted image 20260623204930.png]]
+![[screenshots/Pasted image 20260623204930.png]]
 
 $$\Sigma_i p(x_i) = 1$$
 - probabilities are assigned to individual values
 
 ##### Continuous
 
-![[Pasted image 20260623205017.png]]
+![[screenshots/Pasted image 20260623205017.png]]
 
 $$\int^{\infty}_{-\infty} f(x) dx = 1$$
 - probabilities are assigned to intervals
@@ -48,7 +48,7 @@ $$P(X \in C) = \int_C f(x)dx$$
 - for a small interval of width $\epsilon$ centered at $a$,
 $$P(a - \frac{\epsilon}{2} \leq X \leq a + \frac{\epsilon}{2}) \approx \epsilon f(a)$$
 - As $\epsilon$ approaches 0, the probability goes to zero
-![[Pasted image 20260623205240.png]]
+![[screenshots/Pasted image 20260623205240.png]]
 
 # Joint PDFs
 
@@ -58,14 +58,14 @@ $$f(x,y)$$
 - Marginal densities recover the one-variable distributions:
 $$f_x(x) = \int^{\infty}_{-\infty} f(x,y)dy,$$
 $$f_y(y) = \int^{\infty}_{-\infty} f(x,y)dx$$
-![[Pasted image 20260623210103.png]]
+![[screenshots/Pasted image 20260623210103.png]]
 
 ### Independence Has a Shape
 - two variables are independent when the joint density factors:
 
 $$f(x,y) = f_x(x)f_y(y)$$
 - if knowing $X$ changes what you expect for $Y$, the variables are dependent
-![[Pasted image 20260623210302.png]]
+![[screenshots/Pasted image 20260623210302.png]]
 
 - Takeaway:
 >Dependence is visible as structure in the joint distribution
@@ -76,7 +76,7 @@ $$f(x,y) = f_x(x)f_y(y)$$
 - Marginal density of $X$:
 $$f_x(x) = \int_{-\infty}^{\infty} f_{x,y}(x,y)dy$$
 - to obtain the distribution of $X$, we integrate out $Y$
-![[Pasted image 20260623210715.png]]
+![[screenshots/Pasted image 20260623210715.png]]
 
 - Interpretation
 > for a fixed value of $x$, the marginal density $f_x(x)$ is the total probability obtained by summing over all possible values of $y$
@@ -87,14 +87,14 @@ $$f_x(x) = \int_{-\infty}^{\infty} f_{x,y}(x,y)dy$$
 $$E[X] = \int^{\infty}_{-\infty} xf(x)dx$$
 - Discrete
 $$E[X] = \Sigma_i x_i p_i$$
-![[Pasted image 20260623210902.png]]
+![[screenshots/Pasted image 20260623210902.png]]
 
 ### Variance: Spread Around the Mean
 - Variance measures average squared distance from the mean:
 $$Var(X) = E[(X-\mu)^2]$$
 - a convenient identity is:
 $$Var(X) = E[X^2] - E[X]^2$$
-![[Pasted image 20260623211033.png]]
+![[screenshots/Pasted image 20260623211033.png]]
 - Takeaway:
 > Same mean does not imply same uncertainty. Variance captures spread.
 
@@ -119,7 +119,7 @@ $$f(x) = \frac{1}{b-a}\ if\ a<x<b, 0\ otherwise$$
 $$E[X] = \frac{a+b}{2}, Var(X) = \frac{(b-a)^2}{12}$$
 - The CDF is:
 $$F(x) = \frac{x-a}{b-a}, a<x<b$$
-![[Pasted image 20260623211900.png]]
+![[screenshots/Pasted image 20260623211900.png]]
 
 ### Gaussian Distribution
 - If $X ~ N(\mu, \sigma^2), then:
@@ -127,7 +127,7 @@ $$f(x) = \frac{1}{\sqrt{2 \pi \sigma}} exp(-\frac{(x - \mu)^2}{2 \sigma^2})$$
 - $\mu$ sets the center
 - $\sigma$ sets the scale
 - $\sigma^2$ is the variance
-![[Pasted image 20260623212034.png]]
+![[screenshots/Pasted image 20260623212034.png]]
 
 ### Weak Law of Large Numbers
 - Markov Inequality
@@ -160,7 +160,7 @@ $$P(|X-\mu| \geq k) \leq \frac{E[(X-\mu)^2]}{k^2} = \frac{\sigma^2}{k^2}$$
 
 - the sample average settles down as the number of samples grows:
 
-![[Pasted image 20260623213307.png]]
+![[screenshots/Pasted image 20260623213307.png]]
 
 > The average becomes stable, even though individual outcomes remain random
 
@@ -177,7 +177,7 @@ $$P(|\bar{X}_n - \mu| > \epsilon) \leq \frac{\sigma^2}{n * \epsilon^2} \rightarr
 
 > Averages of indendent and identically distributed random variables become approximately normal
 
-![[Pasted image 20260623213848.png]]
+![[screenshots/Pasted image 20260623213848.png]]
 
 - As $n$ grows, the shape becomes Gaussian and the spread shrinks
 

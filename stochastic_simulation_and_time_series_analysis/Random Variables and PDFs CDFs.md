@@ -30,7 +30,7 @@
 	- $P(X = x_i) = p(x_i)$
 		- probability of the random varialbe $X$ has the value $x_i$
 			- $\Sigma_{i=1}^n P(x_i) = 1$
-![[Pasted image 20260627165831.png]]
+![[screenshots/Pasted image 20260627165831.png]]
 
 - point of clarification
 	- a random variable is a function that maps each outcome of a random experiment to a numerical value
@@ -43,11 +43,11 @@
 - Ex. Annual snowfall in Chicago
 	- $P(X) \neq P(x = X)$
 	- $\int_CP(x)dx = p(x \in C)$
-![[Pasted image 20260627170313.png]]
+![[screenshots/Pasted image 20260627170313.png]]
 - can't interpret the height at any point as the probability
 	- interpret the area under a length $C$ to calculate the probability of occurring in that range
 
-![[Pasted image 20260627170435.png]]
+![[screenshots/Pasted image 20260627170435.png]]
 
 - $\int_{-\infty}^{\infty} P(x) =1$
 
@@ -61,7 +61,7 @@
 		- the CDF is a cumulative sum of the PDF
 	- $p(x) = \frac{df}{dx}$
 
-![[Pasted image 20260627170648.png]]
+![[screenshots/Pasted image 20260627170648.png]]
 - the derivative of the CDF is the PDF
 
 ## Joint PDFs

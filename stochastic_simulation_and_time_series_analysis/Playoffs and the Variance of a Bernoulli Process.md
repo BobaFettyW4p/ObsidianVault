@@ -21,10 +21,10 @@ $$
 \sigma = \sqrt{Var(X)}
 $$
 - in the case where one team is a strong favorite, more outcomes lie close to the mean
-![[Pasted image 20260620115412.png]]
+![[screenshots/Pasted image 20260620115412.png]]
 
 - in a case where both teams are evenly matched, every observation is very far from the mean
-![[Pasted image 20260620115441.png]]
+![[screenshots/Pasted image 20260620115441.png]]
 - in this matchup, every outcome is 0.5 away from the mean
 	- the variance is maximized in this case
 - The formula:

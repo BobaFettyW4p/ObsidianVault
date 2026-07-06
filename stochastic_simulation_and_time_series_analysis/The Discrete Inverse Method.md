@@ -2,7 +2,7 @@
 	- for the case when we can't invert the function
 	- or when we have tabulated data
 - imagine we have a CDF
-![[Pasted image 20260627201602.png]]
+![[screenshots/Pasted image 20260627201602.png]]
 - for the inverse transform method, we want to select a a number in $U(0,1)$, and find the value in the CDF such that $F(X) = U$
 	- solve $F^{-1}(X) = U$ by inverting the function
 - if the CDF is tabulated, you assume the value is constant within each "bin"
