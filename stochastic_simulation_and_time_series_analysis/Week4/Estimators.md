@@ -30,6 +30,7 @@ $$\frac{\delta Q}{\delta \hat{\beta}} = 0 = -Z^T x - Z^T x + 2 Z^T Z \hat{\beta}
 $$Z^TZ\hat{\beta} = Z^T x$$
 $$\hat{\beta} = (Z^TZ)^{-1} Z^T x$$
 - this result is referred to as the *normal equations*
+$$\hat{\beta} = (Z^T Z)^{-1} Z^T x$$
 - a few key points
 	- this equation is extremely general
 		- only linear in the coefficients $\hat{\beta}$
