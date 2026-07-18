@@ -1,0 +1,20 @@
+## Modern GPU Architecture: Microarchitecture, Memory Systems, and Throughput Execution
+- you don't know what GPUs have going on
+	- they don't publish the warp schedule, etc.
+- OpenMP Offload can be used to write programs for GPUs that run across all 3 models of GPU
+- warps are just groups of 32 threads
+	- every warp assigned to a streaming multiprocessor has a state, which is stored in register files
+- floating point computation is not associative
+	- it is commutative
+- data parallelism - form of parallelism where the sam eoperation is being performed on different parts of data at the same time
+	- SIMD
+- a single thread execution is incredibly slow
+	- need all of them working together for speed
+- a thread is a sequence of instructions, one lane of a warp
+	- each program spawns a number of threads
+		- each thread is a sequence of instruction
+		- hardware groups them into groups of 32
+			- each thread is its own group of instruction
+- when a warp gets scheduled on an SME, each thread in that warp, executes a sequence of instructions
+- a cuda core is just a single warp lane
+- 

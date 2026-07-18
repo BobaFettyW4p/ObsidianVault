@@ -1,0 +1,51 @@
+- *hardware multithreading*, increasing utilization of a processor by switching to another thread when one thread is stalled
+	- related to MIMD, especailly from the programmer's perspective
+	- while MIMD relies on multiples processes or threads to keep multiple processors busy, hardware multithreading allows multiple threads to share the functional units of a single processor in an overlapping fashion to utilize harware resource efficiently
+		- *thread* - a thread includes the program counter, the register state, and the stack. It is a lightweight process; whereas threads share a single address space, processes don't
+		- *process* - a process includes one or more threads, the address, and the operating system state. Hence, a process switch usually invokes the operating system, but not a thread switch
+		- ex. each thread would have a separate copy of the register file and the program counter
+- memory can be shared through virtual memory mechanisms, which already support multi-programming
+	- the hardware must also support the ability to change to a different thread relatively quickly
+		- a thread switch should be much more efficient than a process switch
+			- a process switch typically requires hundreds to thousands of cycles
+			- a thread switch can be more or less instantaneous
+- there are two main approaches to hardware multithreading
+	- *fine-grained multithreading* switches between threads on each instruction
+		- results in the interleaved execution of multiple threads
+			- this interleaving is often done in round robin fashion, skipping any stalled threads at the particular cylock cycle
+				- to make this practical, the processor must be able to switch threads for free on every clock cycle
+		- an advantage of this approach is that it can hide the throughput losses that arise from short and long stalls
+			- instructions from other threads can be executed when one thread stalls
+		- a disadvantage is that it slows down the execution of individual threads
+			- a thread that is ready to execute without stalls will be delayed by instructions from other threads
+	- *course-grained multithreading* was invented as an alternative to fine-grained multithreading
+		- switches threads only on costly stalls, such as cache misses
+			- relieves the need to have thread switching be extremely fast
+			- much less likely to slow down the execution of an individual thread
+		- the major drawback is limited in its ability to overcome throughput losses, especially from shorter stalls
+			- this limitation arises from the pipeline start-up costs of coarse-grained multithreading
+			- because a processor with coarse-grained multithreading issues instructions from a single thread, so when a stall occurs, the pipeline must either be emptied or frozen
+				- the new thread needs to fill the pipeline before instructions start to complete
+					- this overhead means coarse-grained multithreading is much more useful for reducing the penalty of high-cost stalls
+- *simultaneous multithreading (SMT)* is a variation on hardware multithreading that uses the resources of a multiple-issue, dynamically scheduled pipelined processor to exploit thread-level parallelism at the same time it exploits instruction-level parallelism
+	- key insight: multiple-issues processors often have more functional unit parallelism available than most single threads can effectively use
+		- with register renaming and dynamic scheduling, multiple instructions from independent threads can be issued without regard to the dependencies among them
+			- the dynamic scheduling capability handles resolution of these dependencies
+	- as SMT relies on existing dynamic mechanisms, it doesn't switch resources every cycle
+		- SMT is always executing instructions from multiple thrads
+			- it's up tot he hardware to associate instruction slots and renamed registers with proper threads
+![[screenshots/Pasted image 20260510082828.png]]
+- the top portion shows how four threads would execute independently with no multithreading support
+- the bottom portion shows how the fourt hreads could be combined to execute on the processor using three multithreading options
+	- a superscalar with coarse-grained multithreading
+	- a superscalar with fine-grained multithreading
+	- a superscalar with simultaneous multithreading
+- a superscalar processor without hardware multithreading support is limited by a lack of instruction-level parallelism
+	- a major stall (i.e. an instruction cache miss) will leave the entire processor idel
+- in coarse-grained multithreading, long stalls are partially hidden by switching to another thread that uses the resources of the processor
+	- this reduces the number of totally idle cycles, but pipeline start-up overhead will still lead to idle cycle
+		- all issue slots will not be used
+- in fine-grained multithreading, interleaving of threads mostly eliminates empty clck cycle
+	- as only a single thread issues instructions in a given clock cycle, there are still idle slots in some clock cycles
+- in the SMT case, thread-level parallelism and instruction-level parallelism are both exploited to minimize the number of empty cycles
+	- multiple threads use the issue slots in a single clock cycle
