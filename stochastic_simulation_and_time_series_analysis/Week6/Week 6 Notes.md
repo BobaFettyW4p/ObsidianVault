@@ -1,0 +1,14 @@
+- logistics
+	- next class is the midterm
+		- will take 90 minutes
+			- will have lecture afterwards
+				- get going on discrete event simulation
+		- covers everything up through Fourier
+			- basic probability
+			- sampling
+			- time series analysis
+			- regression
+			- AR, MA, ARMA
+			- Fourier
+			- 10 practice questions
+				- will see exactly the goal, how to answer them, what he hopes to achieve

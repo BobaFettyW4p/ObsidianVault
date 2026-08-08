@@ -1,3 +1,18 @@
+- If we are justified in making some assumptions about the timeseries, we can compute statistics (mean and autocovariance) with only a single realization
+- we introduce the concept of a *strictly stationary* time series
+- With strict stationarity, the probabilitic behavior of the time series $\{x_1, x_2, \dots, x_n\}$ is identical to that of the timeshifted set $\{x_{1+h}, x_{2+h}, \dots, x_{n+h}\}$
+- Strict Stationarity is difficult to justify in practice
+- A less stringent concept is a *weakly stationary timeseries*
+	- with mean value $\mu_t$ is constant for all $t$
+	- the autocovariance $\gamma(s,t) = \gamma(s+h, t+h)$ for any lag $h$
+- we use these requirements in practice. When we refer to a *stationary* timeseries, we typically mean weak stationarity
+- Thus, the sample mean of a stationary timeseries is just:
+$$\bar{x} = \frac{1}{n}\sum_{i=1}^n x_i$$
+- we can easy show that samples are uncorrelated, the variance of the mean decreases proportionally to $\frac{1}{n}$ and the standard deviation decreases as $\frac{1}{\sqrt{n}}$
+- However, adjacent values may be correlated, even if they come from the same PDF
+	- in this case, the variance of the mean must be calculated as function of lag $h$ and the autocovariance $\gamma_x(h)$
+		- in many practical cases a good estimate of $\gamma_x (h)$ is difficult to obtain
+# Stationarity
 - in practice, we usually only have one realization of a time series
 - to estimate statistical quantities from a single realization, we need an additional assumption
 	- this key assumption is stationarity

@@ -8,7 +8,7 @@
 - separate signal from noise
 - build compact, interpretable models to inform decisions
 
-![[Pasted image 20260711162552.png]]
+![[screenshots/Pasted image 20260711162552.png]]
 
 ## Time Series Forecasting as Conditional Simulation
 - ARMA = Structured Random Process

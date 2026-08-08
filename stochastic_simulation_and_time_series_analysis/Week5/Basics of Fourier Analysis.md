@@ -3,18 +3,18 @@
 - Goal: Reveal hidden periodic patterns in noisy time series
 - Time-domain view can be messy; frequency view can clarify
 - Example applications: climate cycles, finance, vibrations, audio
-![[Pasted image 20260717204426.png]]
+![[screenshots/Pasted image 20260717204426.png]]
 
 ## The Core Question: More Complex Signal
 - a realistic time series can have multiple hidden periodic components
 - can we detect all underlying frequencies despite the noise?
-![[Pasted image 20260717204520.png]]
+![[screenshots/Pasted image 20260717204520.png]]
 
 ## The Answer Revealed in Frequency Space
 - Fourier analysis reveals four dominant frequencies clearly
 - noise is spread across other frequencies and does not obscure the peaks
 - complex time-domain signals become simple in the frequency domain
-![[Pasted image 20260717204613.png]]
+![[screenshots/Pasted image 20260717204613.png]]
 
 ## Two Ways to Describe a Signal
 - Time Domain
@@ -28,7 +28,7 @@
 - Fourier analysis lets us translate between these views
 
 ## From Signals to Sines and Cosines
-![[Pasted image 20260717205023.png]]
+![[screenshots/Pasted image 20260717205023.png]]
 
 - Fourier builds complex signals from simple waves
 - Each additional harmonic captures more detail
@@ -38,7 +38,7 @@
 - Fourier Series (FS)
 	- Applies to perfectly periodic signals with period $L$
 	- Represents the signal as a sum of discrete frequencies $2 \pi n/L$
-	- Useful for signals like seasonalcycles or repeating waveforms
+	- Useful for signals like seasonal cycles or repeating waveforms
 - Fourier Transform (FT)
 	- Applies to general, aperiodic but continuous signals
 	- Produces a continuous spectrum across all frequencies
@@ -51,14 +51,14 @@
 
 ## Big Picture of the DFT
 
-![[Pasted image 20260717205550.png]]
+![[screenshots/Pasted image 20260717205550.png]]
 - Input: $N$ sampled time points $x_0, x_1, \dots x_{N-1}$
 - DFT (via FFT) -> $N$ frequency components $X_0, X_1, \dots, X_{N-1}$
 - magnitude shows how much each frequency contributes to the signal
 - Phase encodes the alignment of each frequency component
 
 ## What Success Looks Like
-![[Pasted image 20260717205705.png]]
+![[screenshots/Pasted image 20260717205705.png]]
 - DFT reveals clear frequency peaks in a messy signal
 - Filtering or keeping only dominant frequencies denoises the signal
 - This is also the basis of *lossy compression*

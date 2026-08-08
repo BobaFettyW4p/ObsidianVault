@@ -20,7 +20,7 @@
 
 ## Toy Regression Examples
 
-![[Pasted image 20260711150632.png]]
+![[screenshots/Pasted image 20260711150632.png]]
 
 ### What Do  We Mean By Error?
 - The *error* is the difference between the actual observed value and the predicted value from the model

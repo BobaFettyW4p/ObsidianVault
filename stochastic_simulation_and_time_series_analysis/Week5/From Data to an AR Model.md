@@ -6,7 +6,7 @@
 
 > What patterns are immediately visible?
 
-![[Pasted image 20260717201323.png]]
+![[screenshots/Pasted image 20260717201323.png]]
 
 - Trend?
 - Daily cycle?
@@ -64,7 +64,7 @@ $$1 - \Phi_q z - \Phi_2 z^2 - \dots - \Phi_p z^p = 0$$
 ## Step 2: Look for Deterministic Structure
 > Stack the daily plots. Does each day have a similar shape?
 
-![[Pasted image 20260717202857.png]]
+![[screenshots/Pasted image 20260717202857.png]]
 
 > What repeats? What differs? Weekdays vs. weekends?
 
@@ -74,19 +74,19 @@ $$1 - \Phi_q z - \Phi_2 z^2 - \dots - \Phi_p z^p = 0$$
 $$x_t = d_t + r_t$$
 - $d_t$: deterministic daily profile
 - $r_t$: stochastic residual process
-![[Pasted image 20260717203012.png]]
+![[screenshots/Pasted image 20260717203012.png]]
 
 ## Step 4: Remove the Daily Pattern
 - subtract the estimated daily profile:
 $$r_t = x_t - d_t$$
-![[Pasted image 20260717203200.png]]
+![[screenshots/Pasted image 20260717203200.png]]
 > What structure remains?
 ## Step 5: Examine the Correlation Structure
-![[Pasted image 20260717203326.png]]
+![[screenshots/Pasted image 20260717203326.png]]
 
 ## Step 6: Choose the AR Order
 
-![[Pasted image 20260717203357.png]]
+![[screenshots/Pasted image 20260717203357.png]]
 
 > How many significant lags do you see?
 > What value of $p$ would you choose?
@@ -96,7 +96,7 @@ $$r_t = x_t - d_t$$
 $$x_t = \Phi_1 x_{t-1} + \Phi_2 x_{t-2} + \dots + \Phi_p x_{t-p} + w_t$$
 - estimate $\Phi$ using the Yule-Walker equations:
 $$R \Phi = r$$
-![[Pasted image 20260717203618.png]]
+![[screenshots/Pasted image 20260717203618.png]]
 
 ## Our Fitted AR(2) Model
 - estimated model for the residual demand:
@@ -115,7 +115,7 @@ $$x_t = 1.4487 x_{t-1} - 0.4984 x_{t-2} + w_t$$
 - estimated innovations:
 $$\hat{w_t} = x_t - \sum_{i=1}^p \hat{\Phi} x_{t-i}$$
 - if the model is good, the innovations should resemble white noise:
-![[Pasted image 20260717204058.png]]
+![[screenshots/Pasted image 20260717204058.png]]
 
 ## What Can We Do Now?
 - we have replaced hundreds of observations with:
