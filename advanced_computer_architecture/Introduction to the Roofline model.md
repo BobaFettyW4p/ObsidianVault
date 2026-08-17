@@ -106,3 +106,133 @@ $$
 - Data Reuse matters
 	- neighbor values are reused across adjacent stencil updates
 	- effective DRAM traffic can be much lower than the naive memory reference point
+- Illustrative arithmetic intensity
+	- $AI \approx \frac{7\ FLOPs}{16\ bytes}  = 0.44\ FLOPs/byte$
+- Interpretation
+	- higher arithmetic intensity than STREAM triad
+	- better reuse moves the kernel to the right on the roofline
+	- performance improves substantially, but still may be memory-bandwidth limited
+- Key lesson
+	- reuse increase arithmetic intensity
+	- blocking and cache-aware optimization can shift performance toward the compute root
+![[Pasted image 20260516085351.png]]
+
+### Example: Sparse Matrix-Vector Multiply (SpMV)
+- Per nonzero in the matrix:
+	- 1 multiply +  1 add = 2 FLOPs
+- Memory traffic includes:
+	- matrix value ($val[j]$) = 8 bytes
+	- column index ($colidx[j]$) = 4 bytes
+	- vector access ($x[colidx[j]]$) = irregular/expensive
+- Optimistic lower-bound arithmetic intensity:
+	- ignoring much of the cost of irregular vector access:
+		- $AI \equiv \frac{2\ FLOPs}{12\ bytes} = 0.17 FLOPs/byte$
+- Reality:
+	- irregular access to a vector often reduces effective locality
+	- actual DRAM traffic may be significantly higher
+	- effective arithmetic intensity may be lower than this estimate
+- Conclusion:
+	- strongly memory-bound
+	- irregular access patterns reduce achievable bandwidth
+	- simple roofline estimates may be optimistic
+	- difficult to improve substantially without changing algorithm
+![[Pasted image 20260516085909.png]]
+
+### Example: Blocked DGEMM
+- Matrix multiplication performs many operations on reused data
+- blocking enables repeated reuse of A and B tiles from cache
+- work scales as $O(B^3)$
+- Data movement scales as $O(B^2)$
+- There:
+$$
+AI = O(B)
+$$
+- Interpretation
+	- arithmetic intensity grows with block size
+	- effective reuse moves DGEMM far to the right on the roofline
+	- well-optimized DGEMM is typically compute-bound
+- Key Lesson
+	- blocking transforms a memory-limited algorithm into a compute-efficient one
+	- data locality is often the key to high performance
+![[Pasted image 20260516092014.png]]
+
+### Example: 1D Fast Fourier Transform (FFT)
+- an N-point FFT performs: $O(N\ \log N)$ floating point work
+- data movement depends strongly on implementation
+- access patterns include strided and bit-reordered phases
+- arithmetic intensity:
+	- typically moderate (roughly order 1 FLOP/byte)
+	- higher than streaming kernels, lower than blocked dense linear algebra
+- Interpretation
+	- FFT sits between memory bound and compute-bound extremes
+	- performance depends heavily on cache behavior and implementation details
+	- effective locality can matter as much as raw FLOP count
+- Key lesson
+	- arithmetic intensity alone does not tell the full story
+	- access patterns strongly influence real performance
+![[Pasted image 20260516092503.png]]
+
+### Hierarchical Roofline
+- the single DRAM roof is a simplification
+	- real processors have multiple storage levels with very different bandwidths
+- Examples
+	- Registers
+	- L1/L2/L3 cache
+	- on-package high-bandwidth memory (e.g. GPUs)
+	- DRAM
+- Application locality matters
+	- small working sets may fit in fast storage
+	- larger working sets spill into slower levels
+- each level defines its own roofline
+	- different effective arithmetic intensity
+	- different bandwidth ceiling
+	- different attainable performance bound
+- Key idea:
+	- a kernel may be DRAM-bound, cache-bound, or compute-bound depending on problem size and implementation
+- Real systems have multiple bandwidth ceilings
+	- L1 cache
+	- L2/L3 cache
+	- high-bandwidth memory (if present)
+	- DRAM
+- Application locality determines which ceiling matters
+	- small working sets may live in cache
+	- larger working sets spill to slower memory
+- a kernel may transition between regimes
+	- compute-bound
+	- cache-bandwidth bound
+	- DRAM-bandwidth bound
+- key idea
+	- performance is limited by the lowest applicable ceiling
+
+
+
+![[Pasted image 20260516093206.png]]
+
+- construct a superposition of Roofline curves, one for each memory level (L1, L2, L3, DRAM, etc)
+- for each level:
+	- measure the bandwidth
+	- estimate or measure the Arithmetic Intensity relative to that level
+- a loop nest may have:
+	- multiple arithmetic intensity values, depending on the level considered
+	- multiple potential performance ceilings (e.g. compute bound, L1 bound, DRAM bound, etc)
+> Performance is ultimately bounded by the lowest of these ceilings, the minimum of all applicable bounds
+
+![[Pasted image 20260516093345.png]]
+
+- Construct the superposition of the Rooflines
+	- measure bandwidth
+	- measure AI for each level of memory
+	- although a loop nest may have multiple AI's and multiple bounds, performance is bound by the minimum
+![[Pasted image 20260516093439.png]]
+
+### Data, Instruction, Thread-Level Parallelism
+- we have assumed one can attain peak flops with high locality
+- in reality, this is premised on sufficient...
+	- use special instructions (e.g. fused multiply-add)
+	- vectorization (16 flops per instruction)
+	- unrolling, out-of-order execution (hide FPU latency)
+	- OpenMP across multiple cores
+- Without these ...
+	- peak performance is not attainable
+	- some kernels can transition from memory-bound to compute-bound
+	- in reality, DRAM bandwidth is often tied to DLP and TLP (single core can't saturate BW w/scalar code)

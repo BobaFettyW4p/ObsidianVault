@@ -1,0 +1,2 @@
+- performance models and tools are an integral part of the performance analysis and performance optimization process for users who seek higher performance and better hardware utilization
+- the roofline model  offers an intuitive way to compare application performance against machine capabilities, track progress towards optimality, and identify bottlenecks, inefficiencies and limitations in software implementations and architecture designs
