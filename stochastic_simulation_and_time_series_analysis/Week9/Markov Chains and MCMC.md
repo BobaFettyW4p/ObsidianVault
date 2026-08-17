@@ -186,3 +186,241 @@ $$X_1 \rightarrow X_2 \rightarrow X_3 \rightarrow \dots$$
 - but the ergodic theorem gives, under suitable conditions,
 $$\frac{1}{N} \sum_{i=1}^N f(X_i) \rightarrow E_{\pi}[f(X)]$$
 > Independent sampling was sufficient for averaging to work. It was not necessary.
+
+
+#### Same goal, two ways to generate the samples
+##### Independent samples
+- If:
+$$X_1, X_2, \dots \sim^{iid} p$$
+- then the law of large numbers gives
+$$\frac{1}{N} \sum_{i=1}^N f(X_i) \rightarrow E_p[f(X)]$$
+
+##### Markov samples
+- If $X_1,X_2, \dots$ come from a suitable Markov chain with stationary distribution $p$,
+$$\frac{1}{N} \sum_{i=1}^N f(X_i) \rightarrow E_p[f(X)]$$
+- both of these methods lead to the same destination
+	- but they have a different way of generating the samples
+
+> This is the fact that makes MCMC possible
+
+# Three different reasons we might be averaging samples
+
+|                         | What we have                                                     | Why averaging works                                                    |
+| ----------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| IID data                | independent samples from some independent distribution $p$       | Law of large numbers                                                   |
+| Observed Markov process | Dependent observations from an ergodic Markov process            | Ergodic theorem                                                        |
+| MCMC                    | A distribution $p$ we want to sample, but cannot sample directly | Construct an ergodic Markov chain whose stationary distribution is $p$ |
+- An important distinction
+> In the first two cases, the stochastic process already exists and we observe it. In MCMC, we deliberately create the stochastic process
+
+# Same destination, different ways of generating the samples
+
+##### Independent samples
+- If
+$$X_1, X_2, \dots \sim^{iid} p$$
+- then the law of large numbers gives
+$$\frac{1}{N} \sum_{i=1}^N f(X_i) \rightarrow E[f(X)] = \int f(x)p(x) dx$$
+##### Dependent Markov samples
+- if $X_1, X_2, \dots$ come from a suitable ergodic Markov process whose stationary distribution is $p$, then:
+$$\frac{1}{N} \sum_{i=1}^N f(X_i) \rightarrow E[f(X)] = \int f(x) p(x) dx$$
+
+# MCMC reverses the direction of the problem
+- for ordinary data analysis, we often start with observations and ask:
+
+> What can their average tell us about the process that generated them?
+
+- MCMC starts from the opposite end
+	- we have a distribution $p$ and want
+$$E[f(X)] = \int f(x) p(x) dx$$
+- but drawing independent samples from $p$ is difficult
+- we deliberately construct a Markov chain with
+$$\text{stationary distribution} = p$$
+- the ergodic theorem then lets us use its dependent samples just as we would have used independent samples from $p$
+
+> If direct sampling from $p$ is hard, manufacture an ergodic process whose long-run distribution is $p$
+
+# The key inversion
+- So far we have asked:
+
+> Given a Markov chain, what is its stationary distribution?
+
+- For MCMC we will reverse the question:
+
+> Given a distribution $\pi$ that we want to sample, can we construct a Markov chain whose stationary distribution is $\pi$?
+
+- if we can, the ergodic theorem lets a single dependent trajectory estimate expectations 
+
+#### Why would we ever want to do that?
+- We want to compute $E_p[f(X)] = \int f(x) p(x) dx$
+	- Monte Carlo turns this expectation into an average of samples drawn from $p$
+		- but drawing independent samples directly from $p$ may be difficult
+			- construct a Markov chain whose stationary distribution is $p$
+
+> This is where Markov chains become a numerical method
+
+# A real example: the Boltzmann distribution
+- Consider a physical system with configuration $x = (x_1, x_2, \dots, x_d)$ and energy $E(x)$
+- At temperature $T$, statistical mechanics tells us that the equilibrium probability of configuration $x$ is:
+$$p(x) = \frac{1}{Z} e^{-E(x) / (kT)}$$
+- where $Z$ is a normalizing constant
+- thus, low-energy configurations are more probable than high-energy configurations
+
+> In this case, $p$ is not something we invented for Monte Carlo. It is the probability distribution of the physical system.
+
+# What do we want to calculate?
+- suppose $f(x)$ is some physical quantity associated with configuration $x$
+	- For example, $x$ might represent:
+		- energy
+		- magnetization
+		- pressure
+- it's equilibrium expected value is:
+$$E_p[f(X)] = \int f(x) p(x) dx$$
+- or, for a discrete configuration space,
+$$E_p[f(X)] = \sum_x f(x)p(x)$$
+
+> This is exactly our $f(x) p(x)$ problem
+
+# Ordinary Monte Carlo tells us exactly what to do
+
+- if we could generate independent configurations:
+$$X_1, X_2, \dots, X_N \sim^{iid} p$$
+- then
+$$E_p[f(X)] \approx \frac{1}{N} \sum_{i=1}^N f(X_i)$$
+- this is no different in principle from our dice example
+- Sample configurations according to their probabilities, then average $f$
+	- So why not just sample $X \sim p$
+
+> If we can sample from $p$, estimating the expectation is straightforward
+
+# But how do we draw $X \sim p$
+- for the loaded dice, sampling from $p$ was easy:
+	- just roll the dice
+- For a system of many interacting particles,
+$$p(x) = \frac{1}{Z} e^{-E(x)/(kT)}$$
+- may be a distribution over an enormous, high-dimensional configuration space
+- We can often evaluate the energy of a particular configuration
+$$x \rightarrow E(x)$$
+- but that does not give us an obvious way to generate an independent configuration $X \sim p$
+
+# Why is the Boltzmann distribution hard to sample?
+
+- the formula may look simple on the surface:
+$$p(x) \propto e^{-E(x)/(kT)}$$
+
+- but $x$ may describe thousands of interacting particles
+##### Loaded dice
+$$p(x_1, \dots, x_N) = \Pi_{i=1}^N p_i (x_i)$$
+- the dice are independent
+	- sample each die separately
+
+##### Interacting particules
+$$E(x) = \sum_{i<j} V(|x_i - x_j)$$
+- each particle's energy depends on the positions of other particles
+	- the coordinates are coupled
+- Given a particular configuration $x$, we may be able to compute:
+$$x \rightarrow E(x) \rightarrrow e^{-E(x)/(kT)}$$
+- but not clear how to generate a random configuration $X$ with correct probabilities
+
+# But we can do something much easier
+- although drawing an independent $X \sim p$ may be difficult, suppose we have two configurations $x$ and $x'$
+	- their relative probabilities are:
+
+$$\frac{p(x')}{p(x)} = \frac{\frac{1}{Z} e^{-E(x')/(kT)}}{\frac{1}{Z} e^{-E(x)/(kT)}}$$
+- the unknown normalizing constant cancels:
+$$\frac{p(x')}{p(x)} = e^{-[E(x')-E(x)]/(kT)}$$
+- we may not know how to draw a completely new independent sample from $p$, but we can compare the relative probabilities of two configurations
+
+> Can we turn this into a sampler for $p$?
+
+# The Metropolis idea
+- we cannot easily generate a completely new independent sample
+$$X \sim p$$
+- but starting from a configuration $x$, we can:
+	- propose a nearby configuration $x'$
+	- compare $p(x')$ with $p(x)$
+	- use that comparison to decide whether to move to $x'$
+	- repeat
+- This produces a sequence:
+$$X_0 \rightarrow X_1 \rightarrow X_2 \rightarrow \dots$$
+- the samples are dependent, they form a Markov chain
+
+> Design the transition rule so the chain's stationary distribution is $p$
+
+
+### Metropolis: make a small local proposal
+
+- suppose the current configuration is $x$
+	- choose one particle
+	- propose moving it a small random distance
+	- call the resulting configuration $x'$
+	- Compute:
+$$\Delta E = E(x') - E(x)$$
+> we never need to invent a completely new configuration from scratch
+
+### The Metropolis acceptance rule
+- for:
+$$\pi(x) \propto e^{-E(x)/(kT)}$$
+- use a symmetric proposal and accept $x'$ with probability:
+$$\alpha(x, x') = min(1, e^{-\Delta E/(kT)})$$
+##### If $\Delta E \leq 0$$
+- lower energy:
+$$\alpha = 1$$
+- always accept
+##### If $\Delta E > 0$$
+- higher energy:
+$$\alpha = e^{-\Delta E / (kT)}$$
+- sometimes accept
+
+#### Why accept moves to worse states?
+- if we accepted only lower-energy moves, the process would descend until trapped in a local minimum
+- at finite temperature, higher-energy configurations must occur too
+	- Metropolis allows for uphill moves, but suppresses them according to:
+$$e^{-\Delta E/(kT)}$$
+##### Temperature matters
+- Small T: uphill moves are rare
+- Large T: uphill moves are more common
+
+> MCMC is sampling, not optimization
+
+### A remarkable convenience: the normalization cancels
+- Suppose:
+$$\pi(x) = \frac{w(z)}{Z}$$
+- where $Z$ is extremely difficult to calculate. then:
+$$\frac{\pi(x')}{\pi(x)} = \frac{w(x')/Z}{w(x)/Z} = \frac{w(x')}{w(x)}$$
+- for the Boltmann distribution:
+$$\frac{pi(x')}{\pi(x)} = e^{-[E(x')-E(x)]/(kT)}$$
+
+> MCMC often requires only an unnormalized target distribution
+
+# Why does this acceptance rule product the right distribution?
+
+- a convenient sufficient condition for stationarity is *detailed balance*:
+$$\pi(x)P(x, x') = \pi(x', x)$$
+- at equilibrium, probability flow from $x$ to $x'$ is balanced by flow from $x'$ to $x$
+- summing over all $x$ gives:
+$$\sum_x \pi(x) P(x, x') = \pi(x')$$
+
+- which is stationarity
+> Detailed balance is not the motivation for Metropolis; it is the mathematical reason the construct works
+
+# Metropolis is engineered to satisfy detailed balance
+
+- let the proposal be symmetric:
+$$q(x,x') = q(x',x)$$
+- Use:
+$$\alpha(x,x') = min(1, \frac{\pi(x')}{\pi(x)}), P(x,x') = q(x,x') \alpha(x,x')$$
+- for either ordering of $\pi(x)$ and $\pi(x')$$:
+$$\pi(x) P(x,x') = \pi(x')P(x',x)$$
+
+> we deliberately rig the transition rule so that $\pi$ becomes stationary
+
+
+# Metropolis-Hastings: The generalization
+
+- If:
+$$x' \sim q(x'|x)$$
+- accept with probability:
+$$\alpha(x,x') = min(1, \frac{\pi(x')q(x|x')}{\pi(x)q(x'|x)})$$
+- $\pi(x')/ \pi(x)$ favors moves toward more probable states
+- the $q$ ratio corrects for proposal asymmetry
+- Symmetric $q$ recovers the original Metropolis rule
